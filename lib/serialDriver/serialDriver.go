@@ -32,13 +32,7 @@ func (s *serialState)ParseIncomming(n int, buff []byte) (err error) {
 	fmt.Printf("New recv buffer, length: %v\n", n)
 	fmt.Printf("bufflen: %v\n", len(buff))
 	for i := 0; i < n; i++ {
-		err := s.parseSerialByte(buff[i])
-		if err != nil {
-			break
-		}
-		if s.Complete == true {
-			break
-		}
+		s.parseSerialByte(buff[i])
 	}
 	return err
 }
@@ -92,6 +86,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			s.length = 0
 			s.Complete = true
 		} else {
+			fmt.Printf("FAIL BUCKET: %v\n", recvByte)
 			selected = false
 		}
 	}

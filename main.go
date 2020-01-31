@@ -145,6 +145,10 @@ func main() {
 	defer port.Close()
 	//getSensor(8, 1, 1)
 
+
+	_serial := serialDriver.SerialState
+	_serial.Init()
+
 	for i := 0; i < 10; i++ {
 		n, err := port.Write(datatest0)
 		if err != nil {
@@ -153,9 +157,6 @@ func main() {
 
 		fmt.Printf("WRITE %v\n", n)
 		// Write 4 bytes to the port.
-		_serial := serialDriver.SerialState
-		_serial.Init()
-
 		for {
 			n, err = port.Read(tbuff)
 			if err != nil {
