@@ -10,7 +10,7 @@ import (
 
 	//"go.bug.st/serial"
 	"github.com/jacobsa/go-serial/serial"
-	"lib/serialDriver"
+	"github.com/kelceydamage/robo-go/lib/serialDriver"
 )
 /*
 func getActiveSerialPorts() ([]string) {
