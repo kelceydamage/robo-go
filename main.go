@@ -123,7 +123,7 @@ func main() {
 		MinimumReadSize: 4,
 	}
 
-	var tbuff = make([]byte, 64)
+	var tbuff = make([]byte, 16)
 	var idx byte = ((8<<4) + 1) & 0xff;
 	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a}
 	/*
@@ -165,6 +165,7 @@ func main() {
 
 	tbuff[n] = 0x0d
 	tbuff[n+1] = 0x0a
+	fmt.Printf("MOD %v\n", n+2)
 	for _, b := range tbuff {
 		fmt.Printf("%v ", b)
 	}
