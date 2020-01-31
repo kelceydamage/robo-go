@@ -28,6 +28,7 @@ func (s *serialState)Init() {
 
 func (s *serialState)ParseIncomming(n int, buff []byte) {	
 	fmt.Printf("New recv buffer, length: %v\n", n)
+	fmt.Printf("bufflen: %v\n", len(buff))
 	for i := 0; i < n; i++ {
 		s.parseSerialByte(buff[i])
 	}
