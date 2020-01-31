@@ -171,7 +171,7 @@ func main() {
 	fmt.Printf("\n")
 	_serial := serialDriver.SerialState
 	_serial.Init()
-	_serial.ParseIncomming(n, tbuff)
+	_serial.ParseIncomming(n+2, tbuff)
 	/*
 	_serial.ParseIncomming(13, datatest4)
 	_serial.ParseIncomming(11, datatest5)
