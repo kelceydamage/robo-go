@@ -136,12 +136,11 @@ func main() {
 	//var buff = make([]byte, 32)
 
 	// Open the port.
-	port, err := serial.Open(options)
+	_, err := serial.Open(options)
 	if err != nil {
 		log.Fatalf("serial.Open: %v", err)
 	}
 
-	fmt.Printf(port)
 
 	// Make sure to close it later.
 	//defer port.Close()
