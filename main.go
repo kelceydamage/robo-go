@@ -117,7 +117,7 @@ func main() {
 	// Set up options.
 	options := serial.OpenOptions{
 		PortName: "/dev/ttyTHS1",
-		BaudRate: 115200,
+		BaudRate: 9600,
 		DataBits: 8,
 		StopBits: 1,
 		MinimumReadSize: 0,
