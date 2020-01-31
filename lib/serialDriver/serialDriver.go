@@ -90,10 +90,10 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		s.tail = 0
 		s.head = 0
 		// register length
-		if s.counter == 1 {
+		if s.counter == 2 {
 			s.length = int(recvByte)
 			selected = true
-		} else if s.counter == 2 {
+		} else if s.counter == 1 {
 			// register id
 			selected = true
 		} else if s.start == true && s.counter - 2 < s.length {
