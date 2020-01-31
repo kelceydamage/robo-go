@@ -126,7 +126,7 @@ func main() {
 
 	var tbuff = make([]byte, 16)
 	var idx byte = ((8<<4) + 1) & 0xff;
-	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a}
+	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8}
 	
 	//var datatest1 = []byte{5, 6, 1, 255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
 	//var datatest2 = []byte{5, 6, 1, 255, 85, idx}
