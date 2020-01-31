@@ -13,6 +13,7 @@ type serialState struct {
 	tail byte
 	counter int
 	length int
+	Complete bool
 }
 
 var SerialState serialState
@@ -24,9 +25,10 @@ func (s *serialState)Init() {
 	s.tail = 0x00
 	s.counter = -1
 	s.length = 0
+	s.Complete = false
 }
 
-func (s *serialState)ParseIncomming(n int, buff []byte) {	
+func (s *serialState)ParseIncomming(n int, buff []byte) (err error) {	
 	fmt.Printf("New recv buffer, length: %v\n", n)
 	fmt.Printf("bufflen: %v\n", len(buff))
 	for i := 0; i < n; i++ {
@@ -35,6 +37,7 @@ func (s *serialState)ParseIncomming(n int, buff []byte) {
 			break
 		}
 	}
+	return err
 }
 
 func (s *serialState)incrementAndStore(recvByte byte) {
@@ -51,12 +54,12 @@ func (s *serialState)incrementAndStore(recvByte byte) {
 func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	//fmt.Printf("parsing byte: %v\n", recvByte)
 	var selected bool
-	var success bool
 	err = nil
 	fmt.Printf("raw byte: %v\n", recvByte)
 	switch {
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
+		s.Complete = false
 		// register start byte
 		s.counter = -1
 		s.head = 0xff
@@ -81,7 +84,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			fmt.Printf(err.Error())
 		} else {
 			fmt.Print("Successful package built\n")
-			success = true
+			s.Complete = true
 		}
 	default:
 		s.tail = 0
@@ -106,9 +109,8 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	if selected == true {
 		s.incrementAndStore(recvByte)
 		selected = false
-		if success == true {
+		if s.Complete == true {
 			s.counter = -1
-			success = false
 		}
 	}
 	return err

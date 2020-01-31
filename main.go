@@ -152,17 +152,32 @@ func main() {
 
 	fmt.Printf("WRITE %v\n", n)
 	// Write 4 bytes to the port.
+	_serial := serialDriver.SerialState
+	_serial.Init()
 
-	n, err = port.Read(tbuff)
-	if err != nil {
-		log.Fatalf("port.Read: %v", err)
+	for {
+		n, err = port.Read(tbuff)
+		if err != nil {
+			log.Fatalf("port.Read: %v", err)
+			break
+		}
+		fmt.Printf("READ %v\n", n)
+		for _, b := range tbuff {
+			fmt.Printf("%v ", b)
+		}
+		fmt.Printf("\n")
+		err = _serial.ParseIncomming(n+2, tbuff)
+		if err != nil {
+			log.Fatalf("port.Read: %v", err)
+			break
+		}
+		if _serial.Complete == true {
+			break
+		}
 	}
-	fmt.Printf("READ %v\n", n)
-	for _, b := range tbuff {
-		fmt.Printf("%v ", b)
-	}
-	fmt.Printf("\n")
+	
 
+	/*
 	tbuff[n] = 0x0d
 	tbuff[n+1] = 0x0a
 	fmt.Printf("MOD %v\n", n+2)
@@ -170,9 +185,9 @@ func main() {
 		fmt.Printf("%v ", b)
 	}
 	fmt.Printf("\n")
-	_serial := serialDriver.SerialState
-	_serial.Init()
-	_serial.ParseIncomming(n+2, tbuff)
+	*/
+	
+	
 	/*
 	_serial.ParseIncomming(13, datatest4)
 	_serial.ParseIncomming(11, datatest5)
