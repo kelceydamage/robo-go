@@ -123,6 +123,7 @@ func main() {
 		MinimumReadSize: 4,
 	}
 	var idx byte = ((8<<4) + 1) & 0xff;
+	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a}
 	var datatest1 = []byte{5, 6, 1, 255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
 	var datatest2 = []byte{5, 6, 1, 255, 85, 4}
 	var datatest3 = []byte{idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
@@ -131,17 +132,21 @@ func main() {
 	//var buff = make([]byte, 32)
 
 	// Open the port.
-	_, err := serial.Open(options)
+	port, err := serial.Open(options)
 	if err != nil {
 		log.Fatalf("serial.Open: %v", err)
 	}
 
-
 	// Make sure to close it later.
-	//defer port.Close()
+	defer port.Close()
 	//getSensor(8, 1, 1)
 	
+	n, err := port.Write(datatest0)
+	if err != nil {
+		log.Fatalf("port.Write: %v", err)
+	}
 
+	fmt.Printf("%v\n", n)
 	// Write 4 bytes to the port.
 	
 	_serial := serialDriver.SerialState
