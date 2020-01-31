@@ -123,13 +123,13 @@ func main() {
 		MinimumReadSize: 4,
 	}
 
-	//var tbuff = make([]byte, 16)
+	var tbuff = make([]byte, 16)
 	var idx byte = ((8<<4) + 1) & 0xff;
-	//var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a}
+	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a}
 	
 	//var datatest1 = []byte{5, 6, 1, 255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
-	var datatest2 = []byte{5, 6, 1, 255, 85, idx}
-	var datatest3 = []byte{4, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
+	//var datatest2 = []byte{5, 6, 1, 255, 85, idx}
+	//var datatest3 = []byte{4, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
 	//var datatest4 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x00, 0x0a, 5, 3 ,55}
 	//var datatest5 = []byte{255, 85, 4, idx, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
 	
@@ -144,7 +144,7 @@ func main() {
 	// Make sure to close it later.
 	defer port.Close()
 	//getSensor(8, 1, 1)
-	/*
+
 	for i := 0; i < 10; i++ {
 		n, err := port.Write(datatest0)
 		if err != nil {
@@ -182,7 +182,7 @@ func main() {
 		}
 		fmt.Printf("\n")
 	}
-	*/
+
 	
 	/*
 	tbuff[n] = 0x0d
@@ -193,7 +193,7 @@ func main() {
 	}
 	fmt.Printf("\n")
 	*/
-	
+	/*
 	_serial := serialDriver.SerialState
 	_serial.Init()
 
@@ -207,7 +207,7 @@ func main() {
 		fmt.Printf("%v ", b)
 	}
 	fmt.Printf("\n")
-
+	*/
 
 	
 	  
