@@ -150,7 +150,7 @@ func main() {
 	_serial.Init()
 
 	for i := 0; i < 10; i++ {
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(16 * time.Millisecond)
 		n, err := port.Write(datatest0)
 		if err != nil {
 			log.Fatalf("port.Write: %v", err)
