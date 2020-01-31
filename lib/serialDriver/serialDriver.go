@@ -80,7 +80,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		selected = true
 		s.start = false
 		fmt.Printf("Confirmed CR/NL sequence\n")
-		if s.counter - 5 < s.length {
+		if s.counter - 4 < s.length {
 			err = errors.New("Corrupted: package: Too short\n")
 			fmt.Printf(err.Error())
 		} else {
