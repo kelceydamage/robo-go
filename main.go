@@ -165,6 +165,10 @@ func main() {
 
 	tbuff[n] = 0x0d
 	tbuff[n+1] = 0x0a
+	for _, b := range tbuff {
+		fmt.Printf("%v ", b)
+	}
+	fmt.Printf("\n")
 	_serial := serialDriver.SerialState
 	_serial.Init()
 	_serial.ParseIncomming(n, tbuff)
