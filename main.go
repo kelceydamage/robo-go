@@ -120,7 +120,7 @@ func main() {
 		BaudRate: 9600,
 		DataBits: 8,
 		StopBits: 1,
-		MinimumReadSize: 8,
+		MinimumReadSize: 4,
 		InterCharacterTimeout: 1,
 	}
 
