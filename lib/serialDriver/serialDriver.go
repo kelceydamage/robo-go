@@ -55,6 +55,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	//fmt.Printf("parsing byte: %v\n", recvByte)
 	var selected bool
 	err = nil
+	//test
 	fmt.Printf("raw byte: %v\n, counter: %v, length: %v, sel: %t", recvByte, s.counter, s.length, selected)
 	switch {
 	case recvByte == 0xff:
