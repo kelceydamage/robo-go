@@ -97,9 +97,9 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		} else if s.counter == 1 {
 			// register id
 			selected = true
-		} else if s.start == true && s.counter - 5 < s.length {
+		} else if s.start == true && s.counter - 3 < s.length {
 			selected = true
-		} else if s.counter >= s.length {
+		} else if s.counter - 3 >= s.length {
 			// set fail flag if too many data bytes
 			err = errors.New("Corrupted: package Too long\n")
 			fmt.Printf(err.Error())
