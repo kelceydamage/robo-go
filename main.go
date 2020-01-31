@@ -166,7 +166,7 @@ func main() {
 			fmt.Printf("%v ", b)
 		}
 		fmt.Printf("\n")
-		err = _serial.ParseIncomming(n+2, tbuff)
+		err = _serial.ParseIncomming(n, tbuff)
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
 			break
