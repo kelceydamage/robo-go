@@ -145,38 +145,44 @@ func main() {
 	defer port.Close()
 	//getSensor(8, 1, 1)
 	
-	n, err := port.Write(datatest0)
-	if err != nil {
-		log.Fatalf("port.Write: %v", err)
-	}
-
-	fmt.Printf("WRITE %v\n", n)
-	// Write 4 bytes to the port.
-	_serial := serialDriver.SerialState
-	_serial.Init()
-
-	for {
-		n, err = port.Read(tbuff)
+	for i := 0; i < 10; i++ {
+		n, err := port.Write(datatest0)
 		if err != nil {
-			log.Fatalf("port.Read: %v", err)
-			break
+			log.Fatalf("port.Write: %v", err)
 		}
-		fmt.Printf("READ %v\n", n)
-		for _, b := range tbuff {
+
+		fmt.Printf("WRITE %v\n", n)
+		// Write 4 bytes to the port.
+		_serial := serialDriver.SerialState
+		_serial.Init()
+
+		for {
+			n, err = port.Read(tbuff)
+			if err != nil {
+				log.Fatalf("port.Read: %v", err)
+				break
+			}
+			fmt.Printf("READ %v\n", n)
+			for _, b := range tbuff {
+				fmt.Printf("%v ", b)
+			}
+			fmt.Printf("\n")
+			err = _serial.ParseIncomming(n, tbuff)
+			if err != nil {
+				log.Fatalf("port.Read: %v", err)
+				break
+			}
+			if _serial.Complete == true {
+				break
+			}
+		}
+		fmt.Printf("\nReceived: ")
+		for _, b := range _serial.Buff {
 			fmt.Printf("%v ", b)
 		}
 		fmt.Printf("\n")
-		err = _serial.ParseIncomming(n, tbuff)
-		if err != nil {
-			log.Fatalf("port.Read: %v", err)
-			break
-		}
-		if _serial.Complete == true {
-			break
-		}
 	}
 	
-
 	/*
 	tbuff[n] = 0x0d
 	tbuff[n+1] = 0x0a
@@ -196,10 +202,6 @@ func main() {
 	*/
 
 
-	fmt.Printf("\nReceived: ")
-	for _, b := range _serial.Buff {
-		fmt.Printf("%v ", b)
-	}
-	fmt.Printf("\n")
+	
 	  
 }
