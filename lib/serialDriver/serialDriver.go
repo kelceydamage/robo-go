@@ -84,6 +84,13 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		} else if s.counter == 1 {
 			// register id
 			selected = true
+		} else if s.length > 1 {
+			selected = true
+			s.length--
+		} else if s.length == 1 {
+			selected = true
+			s.length = 0
+			s.Complete = true
 		} else {
 			selected = false
 		}
