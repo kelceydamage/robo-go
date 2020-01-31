@@ -163,7 +163,8 @@ func main() {
 	}
 	fmt.Printf("\n")
 
-	
+	tbuff[n] = 0x0d
+	tbuff[n+1] = 0x0a
 	_serial := serialDriver.SerialState
 	_serial.Init()
 	_serial.ParseIncomming(n, tbuff)
