@@ -60,7 +60,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	var counter int
 	err = nil
 	//test
-	fmt.Printf("raw byte: %v\n, counter: %v, length: %v, sel: %t", recvByte, s.counter, s.length, selected)
+	fmt.Printf("raw byte: %v\n, counter: %v, length: %v, sel: %n", recvByte, counter, s.length, selected)
 	switch {
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
