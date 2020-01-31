@@ -57,6 +57,7 @@ func openSerialPort(port string) (serial.Port) {
 /*
 * package: {ff, 55, len, idx, action, device, port}
 */
+/*
 func getSensor(port byte, device byte, action byte) {
 	var idx byte = ((port<<4) + device) & 0xff;
 	//var msg = fmt.Sprintf("255,85,4,%v %v %v %v", idx, action, device, port)
@@ -70,7 +71,7 @@ func getSensor(port byte, device byte, action byte) {
 
 	writeSerial(data)
 }
-
+*/
 /**************************************************
     ff 55 len idx action device port slot data a
     0  1  2   3   4      5      6    7    8
@@ -79,6 +80,7 @@ func getSensor(port byte, device byte, action byte) {
 * package: {ff, 55, len, idx, action, device, port, slot, data, a}
 * 7 & 8 are read as a 2 byte short int signed.
 */
+/*
 func getMotor(port byte, speed byte) {
 	//var msg = fmt.Sprintf("255,85,4,%v %v %v %v", idx, action, device, port)
 
@@ -99,7 +101,7 @@ func writeSerial(command []byte) {
 	}
 	fmt.Printf("Sent %v bytes\n", n)
 }
-
+*/
 //func readSerial() (data []byte) {
 //
 //	//return 
@@ -108,15 +110,8 @@ func writeSerial(command []byte) {
 
 //var ports = getActiveSerialPorts()
 //var openPort = openSerialPort(ports[0])
-var options = serial.OpenOptions{
-	PortName: "/dev/tty.usbserial-A8008HlV",
-	BaudRate: 19200,
-	DataBits: 8,
-	StopBits: 1,
-	MinimumReadSize: 4,
-}
-var openPort, err = serial.Open(options)
-var serialBuffer = make(chan byte, 512)
+
+//var serialBuffer = make(chan byte, 512)
 
 func main() {
 	// Set up options.
@@ -144,7 +139,7 @@ func main() {
 
 	// Make sure to close it later.
 	//defer port.Close()
-	getSensor(8, 1, 1)
+	//getSensor(8, 1, 1)
 	
 
 	// Write 4 bytes to the port.
