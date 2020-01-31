@@ -57,10 +57,9 @@ func (s *serialState)incrementAndStore(recvByte byte) {
 func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	//fmt.Printf("parsing byte: %v\n", recvByte)
 	var selected bool
-	var counter int
 	err = nil
 	//test
-	fmt.Printf("raw byte: %v, counter: %v, length: %v\n", recvByte, counter, s.length)
+	fmt.Printf("raw byte: %v, counter: %v, length: %v\n", recvByte, s.counter, s.length)
 	switch {
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
@@ -99,24 +98,23 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		// register length
 		if s.counter == 2 {
 			s.length = int(recvByte)
-			counter = 0
 			selected = true
 		} else if s.counter == 1 {
 			// register id
 			selected = true
-		} else if s.start == true && counter < s.length {
+		} else if s.start == true && s.counter > 3 && s.length > 1  {
 			fmt.Printf("%%%%%%%%%%%%")
 			selected = true
-			counter += 1
-		} else if counter >= s.length {
+			s.length--
+		} else if s.length <= 0 {
 			// set fail flag if too many data bytes
 			err = errors.New("Corrupted: package Too long\n")
 			fmt.Printf(err.Error())
 			s.counter = -1
-		} else if counter == s.length - 1 {
+		} else if s.length == 1 {
 			selected = true
 			s.Complete = true
-			counter = 0
+			s.length--
 			fmt.Print("Successful package built\n")
 		} else {
 			selected = false
