@@ -141,6 +141,8 @@ func main() {
 		log.Fatalf("serial.Open: %v", err)
 	}
 
+	fmt.Printf(port)
+
 	// Make sure to close it later.
 	//defer port.Close()
 	getSensor(8, 1, 1)
@@ -154,7 +156,7 @@ func main() {
 	_serial.ParseIncomming(13, datatest4)
 	_serial.ParseIncomming(11, datatest5)
 	_serial.ParseIncomming(6, datatest2)
-	_serial.ParseIncomming(9, datatest2)
+	_serial.ParseIncomming(9, datatest3)
 
 
 	fmt.Printf("\nReceived: ")
