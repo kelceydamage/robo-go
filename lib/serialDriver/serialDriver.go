@@ -2,7 +2,7 @@ package serialDriver
 
 import (
 	"fmt"
-	"errors"
+	//"errors"
 )
 
 type serialState struct {
@@ -74,24 +74,6 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		s.head = 0
 		selected = true
 		fmt.Printf("Confirmed start sequence\n")
-	/*
-	case recvByte == 0x0d:
-		// register end byte
-		s.tail = 0x0d
-		selected = true
-	case recvByte == 0x0a && s.tail == 0x0d:
-		// confirm full end sequence
-		selected = true
-		s.start = false
-		fmt.Printf("Confirmed CR/NL sequence\n")
-		if s.counter - 4 < s.length {
-			err = errors.New("Corrupted: package: Too short\n")
-			fmt.Printf(err.Error())
-		} else {
-			fmt.Print("Successful package built\n")
-			s.Complete = true
-		}
-		*/
 	default:
 		s.tail = 0
 		s.head = 0
@@ -102,20 +84,6 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		} else if s.counter == 1 {
 			// register id
 			selected = true
-		} else if s.start == true && s.counter > 3 && s.length > 1  {
-			fmt.Printf("%%%%%%%%%%%%")
-			selected = true
-			s.length--
-		} else if s.length <= 0 {
-			// set fail flag if too many data bytes
-			err = errors.New("Corrupted: package Too long\n")
-			fmt.Printf(err.Error())
-			s.counter = -1
-		} else if s.length == 1 {
-			selected = true
-			s.Complete = true
-			s.length--
-			fmt.Print("Successful package built\n")
 		} else {
 			selected = false
 		}
