@@ -80,7 +80,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		selected = true
 		s.start = false
 		fmt.Printf("Confirmed CR/NL sequence\n")
-		if s.counter - 3 < s.length {
+		if s.counter - 5 < s.length {
 			err = errors.New("Corrupted: package: Too short\n")
 			fmt.Printf(err.Error())
 		} else {
@@ -97,7 +97,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		} else if s.counter == 1 {
 			// register id
 			selected = true
-		} else if s.start == true && s.counter - 2 < s.length {
+		} else if s.start == true && s.counter - 5 < s.length {
 			selected = true
 		} else if s.counter >= s.length {
 			// set fail flag if too many data bytes
