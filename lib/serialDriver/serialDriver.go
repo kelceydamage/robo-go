@@ -104,6 +104,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			fmt.Printf(err.Error())
 			s.counter = -1
 		} else {
+			selected = false
 		}
 	}
 	if selected == true {
