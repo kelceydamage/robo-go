@@ -117,7 +117,7 @@ func main() {
 	// Set up options.
 	options := serial.OpenOptions{
 		PortName: "/dev/ttyAMA0",
-		BaudRate: 500000,
+		BaudRate: 115200,
 		DataBits: 8,
 		StopBits: 1,
 		MinimumReadSize: 4,
