@@ -156,6 +156,10 @@ func main() {
 		log.Fatalf("port.Read: %v", err)
 	}
 	fmt.Printf("READ %v\n", n)
+	for _, b := range tbuff {
+		fmt.Printf("%v ", b)
+	}
+	fmt.Printf("\n")
 
 	
 	_serial := serialDriver.SerialState
