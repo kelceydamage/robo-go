@@ -74,6 +74,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		s.head = 0
 		selected = true
 		fmt.Printf("Confirmed start sequence\n")
+	/*
 	case recvByte == 0x0d:
 		// register end byte
 		s.tail = 0x0d
@@ -90,6 +91,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			fmt.Print("Successful package built\n")
 			s.Complete = true
 		}
+		*/
 	default:
 		s.tail = 0
 		s.head = 0
@@ -107,6 +109,10 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			err = errors.New("Corrupted: package Too long\n")
 			fmt.Printf(err.Error())
 			s.counter = -1
+		} else if s.counter - 3 == s.length {
+			selected = true
+			s.Complete = true
+			fmt.Print("Successful package built\n")
 		} else {
 			selected = false
 		}
