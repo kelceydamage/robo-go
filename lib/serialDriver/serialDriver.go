@@ -60,7 +60,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	var counter int
 	err = nil
 	//test
-	fmt.Printf("raw byte: %v\n, counter: %v, length: %v\n", recvByte, counter, s.length)
+	fmt.Printf("raw byte: %v, counter: %v, length: %v\n", recvByte, counter, s.length)
 	switch {
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
@@ -105,8 +105,9 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			// register id
 			selected = true
 		} else if s.start == true && counter < s.length {
+			fmt.Printf("%%%%%%%%%%%%")
 			selected = true
-			counter++
+			counter += 1
 		} else if counter >= s.length {
 			// set fail flag if too many data bytes
 			err = errors.New("Corrupted: package Too long\n")
