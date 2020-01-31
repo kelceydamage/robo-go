@@ -116,11 +116,11 @@ func writeSerial(command []byte) {
 func main() {
 	// Set up options.
 	options := serial.OpenOptions{
-		PortName: "/dev/ttyAMA0",
-		BaudRate: 38400,
+		PortName: "/dev/ttyTHS1",
+		BaudRate: 115200,
 		DataBits: 8,
 		StopBits: 1,
-		MinimumReadSize: 4,
+		MinimumReadSize: 1,
 	}
 
 	var tbuff = make([]byte, 16)
