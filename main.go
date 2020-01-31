@@ -122,6 +122,8 @@ func main() {
 		StopBits: 1,
 		MinimumReadSize: 4,
 	}
+
+	var tbuff = make([]byte, 64)
 	var idx byte = ((8<<4) + 1) & 0xff;
 	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a}
 	var datatest1 = []byte{5, 6, 1, 255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
@@ -146,8 +148,15 @@ func main() {
 		log.Fatalf("port.Write: %v", err)
 	}
 
-	fmt.Printf("%v\n", n)
+	fmt.Printf("WRITE %v\n", n)
 	// Write 4 bytes to the port.
+
+	n, err = port.Read(tbuff)
+	if err != nil {
+		log.Fatalf("port.Read: %v", err)
+	}
+	fmt.Printf("READ %v\n", n)
+
 	
 	_serial := serialDriver.SerialState
 	_serial.Init()
