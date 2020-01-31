@@ -36,6 +36,9 @@ func (s *serialState)ParseIncomming(n int, buff []byte) (err error) {
 		if err != nil {
 			break
 		}
+		if s.Complete == true {
+			break
+		}
 	}
 	return err
 }
