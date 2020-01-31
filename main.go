@@ -130,8 +130,8 @@ func main() {
 	//var datatest1 = []byte{5, 6, 1, 255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
 	var datatest2 = []byte{5, 6, 1, 255, 85, 4}
 	var datatest3 = []byte{idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
-	var datatest4 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x00, 0x0a, 5, 3 ,55}
-	var datatest5 = []byte{255, 85, 4, idx, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
+	//var datatest4 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x00, 0x0a, 5, 3 ,55}
+	//var datatest5 = []byte{255, 85, 4, idx, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
 	
 	//var buff = make([]byte, 32)
 
@@ -197,8 +197,8 @@ func main() {
 	_serial := serialDriver.SerialState
 	_serial.Init()
 
-	_serial.ParseIncomming(13, datatest4)
-	_serial.ParseIncomming(11, datatest5)
+	//_serial.ParseIncomming(13, datatest4)
+	//_serial.ParseIncomming(11, datatest5)
 	_serial.ParseIncomming(6, datatest2)
 	_serial.ParseIncomming(9, datatest3)
 
