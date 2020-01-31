@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"fmt"
-	//"time"
+	"time"
 	//"bytes"
 	//"os"
 	//"strconv"
@@ -150,6 +150,7 @@ func main() {
 	_serial.Init()
 
 	for i := 0; i < 10; i++ {
+		time.Sleep(100 * time.Millisecond)
 		n, err := port.Write(datatest0)
 		if err != nil {
 			log.Fatalf("port.Write: %v", err)
