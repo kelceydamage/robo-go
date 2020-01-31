@@ -60,7 +60,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	var counter int
 	err = nil
 	//test
-	fmt.Printf("raw byte: %v\n, counter: %v, length: %v, sel: %n", recvByte, counter, s.length, selected)
+	fmt.Printf("raw byte: %v\n, counter: %v, length: %v\n", recvByte, counter, s.length)
 	switch {
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
@@ -115,6 +115,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 		} else if counter == s.length - 1 {
 			selected = true
 			s.Complete = true
+			counter = 0
 			fmt.Print("Successful package built\n")
 		} else {
 			selected = false
