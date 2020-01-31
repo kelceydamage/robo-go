@@ -36,6 +36,7 @@ func (s *serialState)ParseIncomming(n int, buff []byte) {
 
 func (s *serialState)incrementAndStore(recvByte byte) {
 	s.counter++
+	fmt.Printf("Counter: %v\n", s.counter)
 	s.Buff[s.counter] = recvByte
 	fmt.Printf("Storing: %v at index %v\n", recvByte, s.counter)
 }
@@ -48,6 +49,7 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 	//fmt.Printf("parsing byte: %v\n", recvByte)
 	var selected bool
 	var success bool
+	fmt.Printf("raw byte: %v\n", recvByte)
 	switch {
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
