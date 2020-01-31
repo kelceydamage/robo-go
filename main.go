@@ -121,7 +121,7 @@ func main() {
 		DataBits: 8,
 		StopBits: 1,
 		MinimumReadSize: 8,
-		InterCharacterTimeout: 100,
+		InterCharacterTimeout: 1,
 	}
 
 	var tbuff = make([]byte, 16)
