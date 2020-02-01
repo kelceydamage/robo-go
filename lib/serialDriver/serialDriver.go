@@ -49,6 +49,7 @@ func (s *serialState)Read(buff []byte) (bytesRead int, err error) {
 		log.Fatalf("port.Read: %v", err)
 		s.err = err
 	}
+	fmt.Println("tempbuff: %v", buff)
 	s.parseIncomming(n, buff)
 	return n, err
 }

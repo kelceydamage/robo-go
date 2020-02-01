@@ -47,6 +47,7 @@ func SensorPackage(numberOfSensors int) (s sensors) {
 func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
 	tempBuff := make([]byte, 12)
 	for _, sensor := range sensorPackage.manifest {
+		fmt.Println("Sending: %v", sensor.Serialized)
 		_, err := c.Write(sensor.Serialized)
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
@@ -57,7 +58,6 @@ func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
 			log.Fatalf("port.Read: %v", err)
 			break
 		} else {
-			fmt.Println("tempbuff: %v", tempBuff)
 			channel <- c.Result(CommRecv - 1)
 		}
 		time.Sleep(2 * time.Millisecond)
