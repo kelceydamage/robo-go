@@ -1,5 +1,10 @@
 package sensors
 
+import (
+	"time"
+	"log"
+)
+
 type Sensor struct {
 	port byte
 	device byte
@@ -36,4 +41,28 @@ func (s *sensors)Set(id int, sensor Sensor) {
 func SensorPackage(numberOfSensors int) (s sensors) {
 	s.manifest = make(map[int]Sensor)
 	return s
+}
+
+func bufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
+	tempBuff := make([]byte, 12)
+	for _, sensor := range sensorPackage.manifest {
+		_, err := c.Write(sensor.Serialized)
+		if err != nil {
+			log.Fatalf("port.Read: %v", err)
+			break
+		}
+		_, err = c.Read(tempBuff)
+		if err != nil {
+			log.Fatalf("port.Read: %v", err)
+			break
+		} else {
+			channel <- tempBuff[0:CommRecv - 1]
+		}
+		time.Sleep(2 * time.Millisecond)
+	}
+}
+
+type comm interface {
+	Read([]byte) (int, error)
+	Write([]byte) (int, error)
 }
