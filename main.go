@@ -108,7 +108,7 @@ func writeSerial(command []byte) {
 func bufferSensors() {
 	
 }
-
+// Global objects
 var serial = serialDriver.SerialState
 var sensorPackage = sensors.SensorPackage(1)
 var sensorFeed = make(chan []byte, 512)
@@ -124,7 +124,6 @@ func init() {
 		InterCharacterTimeout: 1,
 	}
 	serial.Open(options)
-	defer serial.Close()
 
 	// Configure sensors
 	sensors.Ultrasonic.Configure(1, 8)
@@ -132,6 +131,7 @@ func init() {
 }
 
 func main() {
+	defer serial.Close()
 
 	// Set up options.
 	var tbuff = make([]byte, 16)
