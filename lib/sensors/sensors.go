@@ -55,6 +55,7 @@ func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel cha
 			log.Fatalf("port.Read: %v", err)
 			break
 		}
+		fmt.Println("Receiving ...")
 		_, err = c.Read(tempBuff)
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
