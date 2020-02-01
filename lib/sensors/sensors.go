@@ -47,7 +47,7 @@ func SensorPackage(numberOfSensors int) (s sensors) {
 
 func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel chan []byte) {
 	defer wg.Done()
-	for i := 0; i < 5; i++ {
+	for {
 		tempBuff := make([]byte, 12)
 		for _, sensor := range sensorPackage.manifest {
 			fmt.Println("Sending: %v", sensor.Serialized)

@@ -48,8 +48,13 @@ func main() {
 	go sensors.BufferSensors(wg, sensorPackage, &serial, sensorFeed)
 
 	time.Sleep(1 * time.Second)
-	result := <- sensorFeed
-	fmt.Printf("Receiving: %v\n", result)
+
+	// Main loop
+	for {
+		result := <- sensorFeed
+		fmt.Printf("Receiving: %v\n", result)
+	}
+
 
 	// Will fail unless BufferSensors is set to infinite loop
 	wg.Wait()
