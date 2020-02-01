@@ -18,16 +18,19 @@ func (s *Sensor)Configure(device byte, port byte) {
 	s.Serialized = []byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
 }
 
-type Sensors struct {
+type sensors struct {
 	manifest map[int]Sensor
 }
 
 // Getter function
-func (s *Sensors)Get(id int) (sensor Sensor) {
+func (s *sensors)Get(id int) (sensor Sensor) {
 	return s.manifest[id]
 }
 
 // Setter functiomn
-func (s *Sensors)Set(id int, sensor Sensor) {
+func (s *sensors)Set(id int, sensor Sensor) {
 	s.manifest[id] = sensor
 }
+
+var Sensors sensors
+Sensors.manifest = make(map[int]Sensor)
