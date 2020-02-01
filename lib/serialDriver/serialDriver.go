@@ -46,10 +46,12 @@ func (s *serialState)Write(msg []byte) (bytesWritten int, err error) {
 func (s *serialState)Read(buff []byte) (bytesRead int, err error) {
 	var n int
 	for {
+		fmt.Println("Buffer cycle")
 		n, err := s.port.Read(buff)
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
 			s.err = err
+			fmt.Println("error: %v", err)
 		}
 		fmt.Println("tempbuff: %v", buff)
 		s.parseIncomming(n, buff)
