@@ -56,7 +56,7 @@ func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel cha
 				log.Fatalf("port.Read: %v", err)
 				break
 			}
-			fmt.Println("Receiving ...")
+			//fmt.Println("Receiving ...")
 			_, err = c.Read(tempBuff)
 			if err != nil {
 				log.Fatalf("port.Read: %v", err)
@@ -67,7 +67,7 @@ func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel cha
 			time.Sleep(2 * time.Millisecond)
 		}
 	}
-	fmt.Printf("BufferSensors finished")
+	fmt.Println("BufferSensors finished")
 }
 
 type comm interface {
