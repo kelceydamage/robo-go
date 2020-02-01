@@ -57,7 +57,7 @@ func init() {
 func main() {
 	defer serial.Close()
 
-	sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
+	go sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
 
 	result := <- sensorFeed
 	fmt.Printf("Receiving: %v\n", result)
