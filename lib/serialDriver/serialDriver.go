@@ -44,13 +44,19 @@ func (s *serialState)Write(msg []byte) (bytesWritten int, err error) {
 }
 
 func (s *serialState)Read(buff []byte) (bytesRead int, err error) {
-	n, err := s.port.Read(buff)
-	if err != nil {
-		log.Fatalf("port.Read: %v", err)
-		s.err = err
+	var n int
+	for {
+		n, err := s.port.Read(buff)
+		if err != nil {
+			log.Fatalf("port.Read: %v", err)
+			s.err = err
+		}
+		fmt.Println("tempbuff: %v", buff)
+		s.parseIncomming(n, buff)
+		if s.Complete == true {
+			break
+		}
 	}
-	fmt.Println("tempbuff: %v", buff)
-	s.parseIncomming(n, buff)
 	return n, err
 }
 
