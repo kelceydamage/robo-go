@@ -43,7 +43,7 @@ func SensorPackage(numberOfSensors int) (s sensors) {
 	return s
 }
 
-func bufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
+func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
 	tempBuff := make([]byte, 12)
 	for _, sensor := range sensorPackage.manifest {
 		_, err := c.Write(sensor.Serialized)

@@ -57,6 +57,8 @@ func init() {
 func main() {
 	defer serial.Close()
 
+	sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
+
 	// Set up options.
 	var tbuff = make([]byte, 16)
 
