@@ -1,8 +1,12 @@
 package serialDriver
 
 import (
-	"fmt"
+	//"fmt"
 	//"errors"
+	"log"
+	"io"
+
+	"github.com/jacobsa/go-serial/serial"
 )
 
 type serialState struct {
@@ -14,11 +18,14 @@ type serialState struct {
 	counter int
 	length int
 	Complete bool
+	err error
+	port io.ReadWriteCloser
 }
 
 var SerialState serialState
+type OpenOptions = serial.OpenOptions
 
-func (s *serialState)Init() {
+func (s *serialState)Open(options serial.OpenOptions) {
 	s.start = false
 	s.discard = false
 	s.head = 0x00
@@ -26,11 +33,25 @@ func (s *serialState)Init() {
 	s.counter = -1
 	s.length = 0
 	s.Complete = false
+	s.port, s.err = serial.Open(options)
+	if s.err != nil {
+		log.Fatalf("port.Open: %v", s.err)
+	}
+}
+
+func (s *serialState)Write(msg []byte) (bytesWritten int, err error) {
+	return s.port.Write(msg)
+}
+
+func (s *serialState)Read(buff []byte) (bytesRead int, err error) {
+	return s.port.Read(buff)
+}
+
+func (s *serialState)Close() {
+	s.port.Close()
 }
 
 func (s *serialState)ParseIncomming(n int, buff []byte) (err error) {	
-	fmt.Printf("New recv buffer, length: %v\n", n)
-	fmt.Printf("bufflen: %v\n", len(buff))
 	for i := 0; i < n; i++ {
 		s.parseSerialByte(buff[i])
 	}
@@ -39,9 +60,7 @@ func (s *serialState)ParseIncomming(n int, buff []byte) (err error) {
 
 func (s *serialState)incrementAndStore(recvByte byte) {
 	s.counter++
-	fmt.Printf("Counter: %v\n", s.counter)
 	s.Buff[s.counter] = recvByte
-	fmt.Printf("Storing: %v at index %v\n", recvByte, s.counter)
 }
 
 /**************************************************
@@ -49,25 +68,22 @@ func (s *serialState)incrementAndStore(recvByte byte) {
     0  1  2   3   n   n+1    n+2     
 ***************************************************/
 func (s *serialState)parseSerialByte(recvByte byte) (err error) {
-	//fmt.Printf("parsing byte: %v\n", recvByte)
 	var selected bool
 	err = nil
-	//test
-	fmt.Printf("raw byte: %v, counter: %v, length: %v\n", recvByte, s.counter, s.length)
 	switch {
+	// register start byte
 	case recvByte == 0xff:
 		s.Buff = make([]byte, 12)
 		s.Complete = false
-		// register start byte
 		s.counter = -1
 		s.head = 0xff
 		selected = true
+	// confirm full start sequence
 	case recvByte == 0x55 && s.head == 0xff:
-		// confirm full start sequence
 		s.start = true
 		s.head = 0
 		selected = true
-		fmt.Printf("Confirmed start sequence\n")
+	// All other bytes
 	default:
 		s.tail = 0
 		s.head = 0
@@ -86,7 +102,6 @@ func (s *serialState)parseSerialByte(recvByte byte) (err error) {
 			s.length = 0
 			s.Complete = true
 		} else {
-			fmt.Printf("FAIL BUCKET: %v\n", recvByte)
 			selected = false
 		}
 	}

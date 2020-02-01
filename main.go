@@ -3,14 +3,14 @@ package main
 import (
 	"log"
 	"fmt"
-	"time"
+	//"time"
 	//"bytes"
 	//"os"
 	//"strconv"
 
 	//"go.bug.st/serial"
-	"github.com/jacobsa/go-serial/serial"
 	"github.com/kelceydamage/robo-go/lib/serialDriver"
+	"github.com/kelceydamage/robo-go/lib/sensors"
 )
 /*
 func getActiveSerialPorts() ([]string) {
@@ -102,116 +102,69 @@ func writeSerial(command []byte) {
 	fmt.Printf("Sent %v bytes\n", n)
 }
 */
-//func readSerial() (data []byte) {
-//
-//	//return 
-//}
 
 
-//var ports = getActiveSerialPorts()
-//var openPort = openSerialPort(ports[0])
 
-//var serialBuffer = make(chan byte, 512)
+func bufferSensors() {
+	
+}
 
-func main() {
-	// Set up options.
-	options := serial.OpenOptions{
+var serial = serialDriver.SerialState
+var sensorPackage sensors.Sensors
+var sensorFeed = make(chan []byte, 512)
+
+func init() {
+	// Configure communications
+	options := serialDriver.OpenOptions{
 		PortName: "/dev/ttyTHS1",
-		BaudRate: 76800,
+		BaudRate: 76800, // Best|stable option for using Jetson and Megapi
 		DataBits: 8,
 		StopBits: 1,
 		MinimumReadSize: 4,
 		InterCharacterTimeout: 1,
 	}
+	serial.Open(options)
+	defer serial.Close()
 
+	// Configure sensors
+	sensors.Ultrasonic.Configure(1, 8)
+	sensorPackage.Set(0, sensors.Ultrasonic)
+}
+
+func main() {
+
+	// Set up options.
 	var tbuff = make([]byte, 16)
-	var idx byte = ((8<<4) + 1) & 0xff;
-	var datatest0 = []byte{255, 85, 4, idx, 1, 1, 8}
-	
-	//var datatest1 = []byte{5, 6, 1, 255, 85, 4, idx, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
-	//var datatest2 = []byte{5, 6, 1, 255, 85, idx}
-	//var datatest3 = []byte{4, 1, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
-	//var datatest4 = []byte{255, 85, 4, idx, 1, 1, 8, 0x0d, 0x00, 0x0a, 5, 3 ,55}
-	//var datatest5 = []byte{255, 85, 4, idx, 1, 8, 0x0d, 0x0a, 5, 3 ,55}
-	
-	//var buff = make([]byte, 32)
 
-	// Open the port.
-	port, err := serial.Open(options)
+	n, err := serial.Write(sensorPackage.Get(0).Serialized)
 	if err != nil {
-		log.Fatalf("serial.Open: %v", err)
+		log.Fatalf("port.Write: %v", err)
 	}
-
-	// Make sure to close it later.
-	defer port.Close()
-	//getSensor(8, 1, 1)
-
-
-	_serial := serialDriver.SerialState
-	_serial.Init()
-
-	for i := 0; i < 10; i++ {
-		time.Sleep(16 * time.Millisecond)
-		n, err := port.Write(datatest0)
+	fmt.Printf("WRITE %v\n", n)
+	
+	for {
+		n, err = serial.Read(tbuff)
 		if err != nil {
-			log.Fatalf("port.Write: %v", err)
+			log.Fatalf("port.Read: %v", err)
+			break
 		}
-
-		fmt.Printf("WRITE %v\n", n)
-		// Write 4 bytes to the port.
-		for {
-			n, err = port.Read(tbuff)
-			if err != nil {
-				log.Fatalf("port.Read: %v", err)
-				break
-			}
-			fmt.Printf("READ %v\n", n)
-			for _, b := range tbuff {
-				fmt.Printf("%v ", b)
-			}
-			fmt.Printf("\n")
-			err = _serial.ParseIncomming(n, tbuff)
-			if err != nil {
-				log.Fatalf("port.Read: %v", err)
-				break
-			}
-			if _serial.Complete == true {
-				break
-			}
-		}
-		fmt.Printf("\nReceived: ")
-		for _, b := range _serial.Buff {
+		fmt.Printf("READ %v\n", n)
+		for _, b := range tbuff {
 			fmt.Printf("%v ", b)
 		}
 		fmt.Printf("\n")
+		err = serial.ParseIncomming(n, tbuff)
+		if err != nil {
+			log.Fatalf("port.Read: %v", err)
+			break
+		}
+		if serial.Complete == true {
+			break
+		}
 	}
-
-	
-	/*
-	tbuff[n] = 0x0d
-	tbuff[n+1] = 0x0a
-	fmt.Printf("MOD %v\n", n+2)
-	for _, b := range tbuff {
-		fmt.Printf("%v ", b)
-	}
-	fmt.Printf("\n")
-	*/
-	/*
-	_serial := serialDriver.SerialState
-	_serial.Init()
-
-	//_serial.ParseIncomming(13, datatest4)
-	//_serial.ParseIncomming(11, datatest5)
-	_serial.ParseIncomming(6, datatest2)
-	_serial.ParseIncomming(9, datatest3)
-
 	fmt.Printf("\nReceived: ")
-	for _, b := range _serial.Buff {
+	for _, b := range serial.Buff {
 		fmt.Printf("%v ", b)
 	}
 	fmt.Printf("\n")
-	*/
-
-	
-	  
 }
