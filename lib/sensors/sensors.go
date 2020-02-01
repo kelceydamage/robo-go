@@ -32,5 +32,8 @@ func (s *sensors)Set(id int, sensor Sensor) {
 	s.manifest[id] = sensor
 }
 
-var Sensors sensors
-Sensors.manifest = make(map[int]Sensor)
+// Constructor for Sensors
+func SensorPackage(numberOfSensors int) (s sensors) {
+	s.manifest = make(map[int]Sensor)
+	return s
+}

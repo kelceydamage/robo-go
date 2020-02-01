@@ -110,7 +110,7 @@ func bufferSensors() {
 }
 
 var serial = serialDriver.SerialState
-var sensorPackage sensors.Sensors
+var sensorPackage = sensors.SensorPackage(1)
 var sensorFeed = make(chan []byte, 512)
 
 func init() {
