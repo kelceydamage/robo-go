@@ -68,4 +68,5 @@ func main() {
 	fmt.Printf("Receiving: %v\n", result)
 
 	wg.Wait()
+	fmt.Println("main finished")
 }
