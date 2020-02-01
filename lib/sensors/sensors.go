@@ -4,6 +4,7 @@ import (
 	"time"
 	"log"
 	"fmt"
+	"sync"
 )
 
 type Sensor struct {
@@ -44,7 +45,8 @@ func SensorPackage(numberOfSensors int) (s sensors) {
 	return s
 }
 
-func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
+func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel chan []byte) {
+	defer wg.Done()
 	tempBuff := make([]byte, 12)
 	for _, sensor := range sensorPackage.manifest {
 		fmt.Println("Sending: %v", sensor.Serialized)

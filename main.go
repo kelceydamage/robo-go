@@ -3,7 +3,8 @@ package main
 import (
 	//"log"
 	"fmt"
-	//"time"
+	"time"
+	"sync"
 
 	"github.com/kelceydamage/robo-go/lib/serialDriver"
 	"github.com/kelceydamage/robo-go/lib/sensors"
@@ -56,10 +57,14 @@ func init() {
 
 func main() {
 	defer serial.Close()
+	var wg sync.WaitGroup
 
-	go sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
+	// Still need some safety around threading this.
+	go sensors.BufferSensors(wg, sensorPackage, &serial, sensorFeed)
 
+	time.Sleep(1 * time.Second)
 	result := <- sensorFeed
 	fmt.Printf("Receiving: %v\n", result)
 
+	wg.Wait()
 }
