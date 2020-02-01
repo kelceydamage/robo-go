@@ -47,23 +47,25 @@ func SensorPackage(numberOfSensors int) (s sensors) {
 
 func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel chan []byte) {
 	defer wg.Done()
-	tempBuff := make([]byte, 12)
-	for _, sensor := range sensorPackage.manifest {
-		fmt.Println("Sending: %v", sensor.Serialized)
-		_, err := c.Write(sensor.Serialized)
-		if err != nil {
-			log.Fatalf("port.Read: %v", err)
-			break
+	for i := 0; i < 5; i++ {
+		tempBuff := make([]byte, 12)
+		for _, sensor := range sensorPackage.manifest {
+			fmt.Println("Sending: %v", sensor.Serialized)
+			_, err := c.Write(sensor.Serialized)
+			if err != nil {
+				log.Fatalf("port.Read: %v", err)
+				break
+			}
+			fmt.Println("Receiving ...")
+			_, err = c.Read(tempBuff)
+			if err != nil {
+				log.Fatalf("port.Read: %v", err)
+				break
+			} else {
+				channel <- c.Result(CommRecv)
+			}
+			time.Sleep(2 * time.Millisecond)
 		}
-		fmt.Println("Receiving ...")
-		_, err = c.Read(tempBuff)
-		if err != nil {
-			log.Fatalf("port.Read: %v", err)
-			break
-		} else {
-			channel <- c.Result(CommRecv)
-		}
-		time.Sleep(2 * time.Millisecond)
 	}
 	fmt.Printf("BufferSensors finished")
 }

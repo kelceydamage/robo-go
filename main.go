@@ -13,24 +13,8 @@ import (
 /**************************************************
     ff 55 len idx action device port slot data a
     0  1  2   3   4      5      6    7    8
-***************************************************/
-/* 
-* package: {ff, 55, len, idx, action, device, port, slot, data, a}
-* 7 & 8 are read as a 2 byte short int signed.
-*/
-/*
-func getMotor(port byte, speed byte) {
-	//var msg = fmt.Sprintf("255,85,4,%v %v %v %v", idx, action, device, port)
-
-	var data = []byte{255, 85, 6, 0, 2, 10, port, speed}
-	fmt.Printf("mystr:\t %v \n", data)
-
-	//mystr := "\n\r"
-	//data = append(data, mystr...)
-	fmt.Printf("mystr:\t %v \n", data)
-
-	writeSerial(data)
-}
+**************************************************
+[]byte{255, 85, 6, 0, 2, 10, port, speed}
 */
 
 // Global objects
@@ -67,6 +51,7 @@ func main() {
 	result := <- sensorFeed
 	fmt.Printf("Receiving: %v\n", result)
 
+	// Will fail unless BufferSensors is set to infinite loop
 	wg.Wait()
 	fmt.Println("main finished")
 }
