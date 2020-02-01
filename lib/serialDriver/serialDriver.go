@@ -1,7 +1,7 @@
 package serialDriver
 
 import (
-	//"fmt"
+	"fmt"
 	//"errors"
 	"log"
 	"io"
@@ -77,6 +77,7 @@ func (s *serialState)incrementAndStore(recvByte byte) {
     0  1  2   3   n   n+1    n+2     
 ***************************************************/
 func (s *serialState)parseSerialByte(recvByte byte) {
+	fmt.Println("processing: %v", recvByte)
 	var selected bool
 	var err error
 	switch {

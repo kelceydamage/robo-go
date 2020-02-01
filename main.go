@@ -60,6 +60,6 @@ func main() {
 	sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
 
 	result := <- sensorFeed
-	fmt.Printf("%v", result)
+	fmt.Printf("%v\n", result)
 
 }
