@@ -1,5 +1,5 @@
-
+DATE=`date`
 git add .
 git config --global user.name "Kelcey Jamison-Damage"
-git commit -m 'test'
+git commit -m "$DATE - auto commit"
 git push origin master
