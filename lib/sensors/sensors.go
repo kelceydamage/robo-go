@@ -56,7 +56,7 @@ func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
 			log.Fatalf("port.Read: %v", err)
 			break
 		} else {
-			channel <- tempBuff[0:CommRecv - 1]
+			channel <- c.Result(CommRecv - 1)
 		}
 		time.Sleep(2 * time.Millisecond)
 	}
@@ -65,4 +65,5 @@ func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
 type comm interface {
 	Read([]byte) (int, error)
 	Write([]byte) (int, error)
+	Result(int) ([]byte)
 }

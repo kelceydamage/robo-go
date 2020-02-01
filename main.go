@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	//"log"
 	"fmt"
 	//"time"
 
@@ -59,38 +59,7 @@ func main() {
 
 	sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
 
-	// Set up options.
-	var tbuff = make([]byte, 16)
+	result := <- sensorFeed
+	fmt.Printf("%v", result)
 
-	n, err := serial.Write(sensorPackage.Get(0).Serialized)
-	if err != nil {
-		log.Fatalf("port.Write: %v", err)
-	}
-	fmt.Printf("WRITE %v\n", n)
-	
-	for {
-		n, err = serial.Read(tbuff)
-		if err != nil {
-			log.Fatalf("port.Read: %v", err)
-			break
-		}
-		fmt.Printf("READ %v\n", n)
-		for _, b := range tbuff {
-			fmt.Printf("%v ", b)
-		}
-		fmt.Printf("\n")
-		err = serial.ParseIncomming(n, tbuff)
-		if err != nil {
-			log.Fatalf("port.Read: %v", err)
-			break
-		}
-		if serial.Complete == true {
-			break
-		}
-	}
-	fmt.Printf("\nReceived: ")
-	for _, b := range serial.Buff {
-		fmt.Printf("%v ", b)
-	}
-	fmt.Printf("\n")
 }
