@@ -3,6 +3,7 @@ package sensors
 import (
 	"time"
 	"log"
+	"fmt"
 )
 
 type Sensor struct {
@@ -56,6 +57,7 @@ func BufferSensors(sensorPackage sensors, c comm, channel chan []byte) {
 			log.Fatalf("port.Read: %v", err)
 			break
 		} else {
+			fmt.Println("tempbuff: %v", tempBuff)
 			channel <- c.Result(CommRecv - 1)
 		}
 		time.Sleep(2 * time.Millisecond)
