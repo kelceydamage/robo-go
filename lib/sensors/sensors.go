@@ -65,6 +65,7 @@ func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel cha
 		}
 		time.Sleep(2 * time.Millisecond)
 	}
+	fmt.Printf("BufferSensors finished")
 }
 
 type comm interface {
