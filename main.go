@@ -51,9 +51,12 @@ func main() {
 	wg.Wait()
 
 	// Main loop
+	counter := 0
 	for {
 		result := <-sensorFeed
 		fmt.Printf("Receiving: %v\n", result)
+		counter++
+		fmt.Printf("Receiving Count: %v\n", counter)
 	}
 
 	// Will fail unless BufferSensors is set to infinite loop

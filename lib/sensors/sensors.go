@@ -69,6 +69,7 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 				log.Fatalf("port.Read: %v", err)
 				break
 			} else {
+				fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
 				channel <- c.Result(CommRecv)
 			}
 			time.Sleep(2 * time.Millisecond)
