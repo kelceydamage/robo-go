@@ -72,7 +72,7 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 				fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
 				channel <- c.Result(CommRecv)
 			}
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(2 * time.Millisecond)
 		}
 	}
 }
