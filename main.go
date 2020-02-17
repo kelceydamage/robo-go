@@ -55,7 +55,7 @@ func main() {
 		result := <-sensorFeed
 		fmt.Printf("Receiving: %v\n", result)
 		counter++
-		fmt.Printf("Receiving Count: %v\n", counter)
+		fmt.Printf("Receiving Count: %v Channel Occupancy: %v\n", counter, len(sensorFeed))
 	}
 
 	// Will fail unless BufferSensors is set to infinite loop
