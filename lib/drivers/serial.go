@@ -1,4 +1,4 @@
-package serialDriver
+package drivers
 
 import (
 	"fmt"
@@ -22,8 +22,11 @@ type serialState struct {
 	port     io.ReadWriteCloser
 }
 
+// SerialState is the driver object to be used for communicating with
+// MegaPi control board.
 var SerialState serialState
 
+// OpenOptions are the options object for the serial interface.
 type OpenOptions = serial.OpenOptions
 
 func (s *serialState) Open(options serial.OpenOptions) {
@@ -52,9 +55,9 @@ func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
 			s.err = err
-			fmt.Println("error: %v", err)
+			fmt.Printf("error: %v\n", err)
 		}
-		fmt.Println("tempbuff: %v", buff)
+		fmt.Printf("tempbuff: %v\n", buff)
 		s.parseIncomming(n, buff)
 		if s.Complete == true {
 			break
@@ -68,7 +71,8 @@ func (s *serialState) Result(n int) (buff []byte) {
 }
 
 func (s *serialState) Close() {
-	s.port.Close()
+	// not yet implemented
+	// s.port.Close()
 }
 
 func (s *serialState) parseIncomming(n int, buff []byte) {
@@ -87,7 +91,7 @@ func (s *serialState) incrementAndStore(recvByte byte) {
     0  1  2   3   n   n+1    n+2
 ***************************************************/
 func (s *serialState) parseSerialByte(recvByte byte) {
-	var selected bool
+	var selected = true
 	var err error
 	switch {
 	// register start byte
@@ -96,12 +100,10 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 		s.Complete = false
 		s.counter = -1
 		s.head = 0xff
-		selected = true
 	// confirm full start sequence
 	case recvByte == 0x55 && s.head == 0xff:
 		s.start = true
 		s.head = 0
-		selected = true
 	// All other bytes
 	default:
 		s.tail = 0
@@ -109,15 +111,11 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 		// register length
 		if s.counter == 2 {
 			s.length = int(recvByte)
-			selected = true
 		} else if s.counter == 1 {
 			// register id
-			selected = true
 		} else if s.length > 1 {
-			selected = true
 			s.length--
 		} else if s.length == 1 {
-			selected = true
 			s.length = 0
 			s.Complete = true
 		} else {
@@ -126,7 +124,6 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	}
 	if selected == true {
 		s.incrementAndStore(recvByte)
-		selected = false
 		if s.Complete == true {
 			s.counter = -1
 		}

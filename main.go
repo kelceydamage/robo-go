@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kelceydamage/robo-go/lib/drivers"
 	"github.com/kelceydamage/robo-go/lib/sensors"
-	"github.com/kelceydamage/robo-go/lib/serialDriver"
 )
 
 /**************************************************
@@ -18,13 +18,13 @@ import (
 */
 
 // Global objects
-var serial = serialDriver.SerialState
+var serial = drivers.SerialState
 var sensorPackage = sensors.SensorPackage(1)
 var sensorFeed = make(chan []byte, 512)
 
 func init() {
 	// Configure communications
-	options := serialDriver.OpenOptions{
+	options := drivers.OpenOptions{
 		PortName:              "/dev/ttyTHS1",
 		BaudRate:              76800, // Best|stable option for using Jetson and Megapi
 		DataBits:              8,
@@ -45,9 +45,10 @@ func main() {
 
 	// Still need some safety around threading this.
 	wg.Add(1)
-	go sensors.BufferSensors(wg, sensorPackage, &serial, sensorFeed)
+	go sensors.BufferSensors(&wg, sensorPackage, &serial, sensorFeed)
 
 	time.Sleep(1 * time.Second)
+	wg.Wait()
 
 	// Main loop
 	for {
@@ -56,6 +57,6 @@ func main() {
 	}
 
 	// Will fail unless BufferSensors is set to infinite loop
-	wg.Wait()
-	fmt.Println("main finished")
+
+	//fmt.Println("main finished")
 }

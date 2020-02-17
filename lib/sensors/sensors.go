@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+// Sensor is the representation of a physical sensor on the controller.
+// It contains the serial code to retrieve data from the ophysical sensor, along
+// with the device, port, and id.
 type Sensor struct {
 	port       byte
 	device     byte
@@ -14,43 +17,47 @@ type Sensor struct {
 	Serialized []byte
 }
 
-func (s *Sensor) generateId() {
+func (s *Sensor) generateID() {
 	s.idx = ((s.port << 4) + s.device) & 0xff
 }
 
+// Configure generates the serial code for calling the sensor.
 func (s *Sensor) Configure(device byte, port byte) {
 	s.device = device
 	s.port = port
-	s.generateId()
+	s.generateID()
 	s.Serialized = []byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
 }
 
-type sensors struct {
+// Sensors is a map designed to store a Sensor at any given index.
+type Sensors struct {
 	manifest map[int]Sensor
 }
 
-// Getter function
-func (s *sensors) Get(id int) (sensor Sensor) {
+// Get a particular sensor at a given index from the manifest.
+func (s *Sensors) Get(id int) (sensor Sensor) {
 	return s.manifest[id]
 }
 
-// Setter functiomn
-func (s *sensors) Set(id int, sensor Sensor) {
+// Set a particular Sensor at a given index in the manifest.
+func (s *Sensors) Set(id int, sensor Sensor) {
 	s.manifest[id] = sensor
 }
 
-// Constructor for Sensors
-func SensorPackage(numberOfSensors int) (s sensors) {
+// SensorPackage constructor.
+func SensorPackage(numberOfSensors int) (s Sensors) {
 	s.manifest = make(map[int]Sensor)
 	return s
 }
 
-func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel chan []byte) {
+// BufferSensors is a go routine that continually loops through the Sensors and
+// writes their data to a channel.
+func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel chan []byte) {
 	defer wg.Done()
 	for {
 		tempBuff := make([]byte, 12)
 		for _, sensor := range sensorPackage.manifest {
-			fmt.Println("Sending: %v", sensor.Serialized)
+			fmt.Printf("Sending: %v\n", sensor.Serialized)
 			_, err := c.Write(sensor.Serialized)
 			if err != nil {
 				log.Fatalf("port.Read: %v", err)
@@ -67,7 +74,6 @@ func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel cha
 			time.Sleep(2 * time.Millisecond)
 		}
 	}
-	fmt.Println("BufferSensors finished")
 }
 
 type comm interface {
