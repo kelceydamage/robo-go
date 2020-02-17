@@ -48,7 +48,6 @@ func main() {
 	go sensors.BufferSensors(&wg, sensorPackage, &serial, sensorFeed)
 
 	time.Sleep(1 * time.Second)
-	wg.Wait()
 
 	// Main loop
 	counter := 0
@@ -60,6 +59,7 @@ func main() {
 	}
 
 	// Will fail unless BufferSensors is set to infinite loop
+	wg.Wait()
 
 	//fmt.Println("main finished")
 }
