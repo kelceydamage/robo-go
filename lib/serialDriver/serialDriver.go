@@ -3,29 +3,30 @@ package serialDriver
 import (
 	"fmt"
 	//"errors"
-	"log"
 	"io"
+	"log"
 
 	"github.com/jacobsa/go-serial/serial"
 )
 
 type serialState struct {
-	Buff []byte
-	start bool
-	discard bool
-	head byte
-	tail byte
-	counter int
-	length int
+	Buff     []byte
+	start    bool
+	discard  bool
+	head     byte
+	tail     byte
+	counter  int
+	length   int
 	Complete bool
-	err error
-	port io.ReadWriteCloser
+	err      error
+	port     io.ReadWriteCloser
 }
 
 var SerialState serialState
+
 type OpenOptions = serial.OpenOptions
 
-func (s *serialState)Open(options serial.OpenOptions) {
+func (s *serialState) Open(options serial.OpenOptions) {
 	s.start = false
 	s.discard = false
 	s.head = 0x00
@@ -39,11 +40,11 @@ func (s *serialState)Open(options serial.OpenOptions) {
 	}
 }
 
-func (s *serialState)Write(msg []byte) (bytesWritten int, err error) {
+func (s *serialState) Write(msg []byte) (bytesWritten int, err error) {
 	return s.port.Write(msg)
 }
 
-func (s *serialState)Read(buff []byte) (bytesRead int, err error) {
+func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
 	var n int
 	for {
 		//fmt.Println("Buffer cycle")
@@ -62,30 +63,30 @@ func (s *serialState)Read(buff []byte) (bytesRead int, err error) {
 	return n, err
 }
 
-func (s *serialState)Result(n int) (buff []byte) {
+func (s *serialState) Result(n int) (buff []byte) {
 	return s.Buff[0:n]
 }
 
-func (s *serialState)Close() {
+func (s *serialState) Close() {
 	s.port.Close()
 }
 
-func (s *serialState)parseIncomming(n int, buff []byte) {	
+func (s *serialState) parseIncomming(n int, buff []byte) {
 	for i := 0; i < n; i++ {
 		s.parseSerialByte(buff[i])
 	}
 }
 
-func (s *serialState)incrementAndStore(recvByte byte) {
+func (s *serialState) incrementAndStore(recvByte byte) {
 	s.counter++
 	s.Buff[s.counter] = recvByte
 }
 
 /**************************************************
-    ff 55 len idx ... cr(0d) nl(0a) 
-    0  1  2   3   n   n+1    n+2     
+    ff 55 len idx ... cr(0d) nl(0a)
+    0  1  2   3   n   n+1    n+2
 ***************************************************/
-func (s *serialState)parseSerialByte(recvByte byte) {
+func (s *serialState) parseSerialByte(recvByte byte) {
 	var selected bool
 	var err error
 	switch {

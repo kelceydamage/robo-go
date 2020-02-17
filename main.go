@@ -3,11 +3,11 @@ package main
 import (
 	//"log"
 	"fmt"
-	"time"
 	"sync"
+	"time"
 
-	"github.com/kelceydamage/robo-go/lib/serialDriver"
 	"github.com/kelceydamage/robo-go/lib/sensors"
+	"github.com/kelceydamage/robo-go/lib/serialDriver"
 )
 
 /**************************************************
@@ -25,11 +25,11 @@ var sensorFeed = make(chan []byte, 512)
 func init() {
 	// Configure communications
 	options := serialDriver.OpenOptions{
-		PortName: "/dev/ttyTHS1",
-		BaudRate: 76800, // Best|stable option for using Jetson and Megapi
-		DataBits: 8,
-		StopBits: 1,
-		MinimumReadSize: 4,
+		PortName:              "/dev/ttyTHS1",
+		BaudRate:              76800, // Best|stable option for using Jetson and Megapi
+		DataBits:              8,
+		StopBits:              1,
+		MinimumReadSize:       4,
 		InterCharacterTimeout: 1,
 	}
 	serial.Open(options)
@@ -51,10 +51,9 @@ func main() {
 
 	// Main loop
 	for {
-		result := <- sensorFeed
+		result := <-sensorFeed
 		fmt.Printf("Receiving: %v\n", result)
 	}
-
 
 	// Will fail unless BufferSensors is set to infinite loop
 	wg.Wait()

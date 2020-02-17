@@ -1,24 +1,24 @@
 package sensors
 
 import (
-	"time"
-	"log"
 	"fmt"
+	"log"
 	"sync"
+	"time"
 )
 
 type Sensor struct {
-	port byte
-	device byte
-	idx byte
+	port       byte
+	device     byte
+	idx        byte
 	Serialized []byte
 }
 
-func (s *Sensor)generateId() {
-	s.idx = ((s.port<<4) + s.device) & 0xff;
+func (s *Sensor) generateId() {
+	s.idx = ((s.port << 4) + s.device) & 0xff
 }
 
-func (s *Sensor)Configure(device byte, port byte) {
+func (s *Sensor) Configure(device byte, port byte) {
 	s.device = device
 	s.port = port
 	s.generateId()
@@ -30,12 +30,12 @@ type sensors struct {
 }
 
 // Getter function
-func (s *sensors)Get(id int) (sensor Sensor) {
+func (s *sensors) Get(id int) (sensor Sensor) {
 	return s.manifest[id]
 }
 
 // Setter functiomn
-func (s *sensors)Set(id int, sensor Sensor) {
+func (s *sensors) Set(id int, sensor Sensor) {
 	s.manifest[id] = sensor
 }
 
@@ -73,5 +73,5 @@ func BufferSensors(wg sync.WaitGroup, sensorPackage sensors, c comm, channel cha
 type comm interface {
 	Read([]byte) (int, error)
 	Write([]byte) (int, error)
-	Result(int) ([]byte)
+	Result(int) []byte
 }
