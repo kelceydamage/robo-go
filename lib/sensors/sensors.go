@@ -1,8 +1,6 @@
 package sensors
 
 import (
-	"fmt"
-	"log"
 	"sync"
 	"time"
 )
@@ -57,21 +55,25 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 	for {
 		tempBuff := make([]byte, 12)
 		for _, sensor := range sensorPackage.manifest {
-			fmt.Printf("Sending: %v\n", sensor.Serialized)
-			_, err := c.Write(sensor.Serialized)
-			if err != nil {
-				log.Fatalf("port.Read: %v", err)
-				break
-			}
-			//fmt.Println("Receiving ...")
-			_, err = c.Read(tempBuff)
-			if err != nil {
-				log.Fatalf("port.Read: %v", err)
-				break
-			} else {
-				fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
-				channel <- c.Result(CommRecv)
-			}
+			/*
+				fmt.Printf("Sending: %v\n", sensor.Serialized)
+				_, err := c.Write(sensor.Serialized)
+				if err != nil {
+					log.Fatalf("port.Read: %v", err)
+					break
+				}
+				//fmt.Println("Receiving ...")
+				_, err = c.Read(tempBuff)
+				if err != nil {
+					log.Fatalf("port.Read: %v", err)
+					break
+				} else {
+					//fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
+					channel <- c.Result(CommRecv)
+				}
+			*/
+			tempBuff = []byte{0xff, 0x55, sensor.device, 0x00, 0x00, 0x00, 0x00, 0x00}
+			channel <- tempBuff
 			time.Sleep(2 * time.Millisecond)
 		}
 	}
