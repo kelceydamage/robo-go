@@ -9,6 +9,14 @@ import (
 	"unsafe"
 )
 
+// SensorReading is a tagged value object.
+type SensorReading struct {
+	port   byte
+	device byte
+	idx    byte
+	value  float32
+}
+
 // Sensor is the representation of a physical sensor on the controller.
 // It contains the serial code to retrieve data from the ophysical sensor, along
 // with the device, port, and id.
@@ -17,6 +25,22 @@ type Sensor struct {
 	device     byte
 	idx        byte
 	Serialized []byte
+}
+
+func (s *Sensor) getReading(c *comm) SensorReading {
+	var reading SensorReading
+	reading.port = s.port
+	reading.device = s.device
+	reading.idx = s.idx
+	reading.value = s.asFloat((*c).Result(CommRecv)[4:])
+	return reading
+}
+
+func (s *Sensor) asFloat(bytes []byte) float32 {
+	binrep := binary.LittleEndian.Uint32(bytes)
+	fmt.Printf("Converting: %v, %v\v", bytes, binrep)
+	floatrep := *(*float32)(unsafe.Pointer(&binrep))
+	return floatrep
 }
 
 func (s *Sensor) generateID() {
@@ -29,13 +53,6 @@ func (s *Sensor) Configure(device byte, port byte) {
 	s.port = port
 	s.generateID()
 	s.Serialized = []byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
-}
-
-func (s *Sensor) asFloat(bytes []byte) float32 {
-	binrep := binary.LittleEndian.Uint32(bytes)
-	fmt.Printf("Converting: %v, %v\v", bytes, binrep)
-	floatrep := *(*float32)(unsafe.Pointer(&binrep))
-	return floatrep
 }
 
 // Sensors is a map designed to store a Sensor at any given index.
@@ -61,32 +78,25 @@ func SensorPackage(numberOfSensors int) (s Sensors) {
 
 // BufferSensors is a go routine that continually loops through the Sensors and
 // writes their data to a channel.
-func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel chan []byte) {
+func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel chan SensorReading) {
 	defer wg.Done()
 	for {
 		tempBuff := make([]byte, 12)
 		for _, sensor := range sensorPackage.manifest {
 			fmt.Printf("Sending: %v\n", sensor.Serialized)
 
-			// Suspected memory error on MegaPi leading to freezing...
 			_, err := c.Write(sensor.Serialized)
 			if err != nil {
 				log.Fatalf("port.Read: %v", err)
 				break
 			}
-			//fmt.Println("Receiving ...")
 			_, err = c.Read(tempBuff)
 			if err != nil {
 				log.Fatalf("port.Read: %v", err)
 				break
 			} else {
-				//fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
-				fmt.Printf("Converting: %v\v", c.Result(CommRecv)[4:])
-				fmt.Printf("Reading: %v\n", sensor.asFloat(c.Result(CommRecv)[4:]))
-				channel <- c.Result(CommRecv)
+				channel <- sensor.getReading(&c)
 			}
-			//tempBuff = []byte{0xff, 0x55, sensor.device, 0x00, 0x00, 0x00, 0x00, 0x00}
-			//channel <- tempBuff
 			time.Sleep(20 * time.Millisecond)
 		}
 	}

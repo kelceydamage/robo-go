@@ -20,7 +20,7 @@ import (
 // Global objects
 var serial = drivers.SerialState
 var sensorPackage = sensors.SensorPackage(1)
-var sensorFeed = make(chan []byte, 512)
+var sensorFeed = make(chan sensors.SensorReading, 512)
 
 func init() {
 	// Configure communications
@@ -45,7 +45,7 @@ func main() {
 
 	// Still need some safety around threading this.
 	wg.Add(1)
-	go sensors.BufferSensors(&wg, sensorPackage, &serial, sensorFeed)
+	go sensors.BufferSensors(&wg, sensorPackage, serial, sensorFeed)
 
 	time.Sleep(1 * time.Second)
 
