@@ -16,4 +16,5 @@
 
 package sensors
 
+// Ultrasonic is a predefined alias object for a sensor.
 var Ultrasonic Sensor

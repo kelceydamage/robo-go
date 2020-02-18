@@ -10,23 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Copyright (c) 2020 Author Name. All rights reserved.
-// Use of this source code is governed by the Apache License, Version 2.0
-// that can be found in the LICENSE file.
-
 package sensors
 
-// Sensors is a map designed to store a Sensor at any given index.
-type Sensors struct {
-	manifest map[int]Sensor
-}
-
-// Get a particular sensor at a given index from the manifest.
-func (s *Sensors) Get(id int) (sensor Sensor) {
-	return s.manifest[id]
-}
-
-// Set a particular Sensor at a given index in the manifest.
-func (s *Sensors) Set(id int, sensor Sensor) {
-	s.manifest[id] = sensor
+// SensorReading is a tagged value object.
+type SensorReading struct {
+	Port   byte
+	Device byte
+	Idx    byte
+	Value  float32
 }

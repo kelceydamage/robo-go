@@ -19,7 +19,6 @@ package main
 import (
 	//"log"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/kelceydamage/robo-go/lib/drivers"
@@ -35,7 +34,7 @@ import (
 
 // Global objects
 var serial = drivers.SerialState
-var sensorPackage = sensors.SensorPackage(1)
+var sensorPackage = sensors.PackageSensors(1)
 var sensorFeed = make(chan sensors.SensorReading, 512)
 
 func init() {
@@ -57,11 +56,8 @@ func init() {
 
 func main() {
 	defer serial.Close()
-	var wg sync.WaitGroup
 
-	// Still need some safety around threading this.
-	wg.Add(1)
-	go sensors.BufferSensors(&wg, sensorPackage, &serial, sensorFeed)
+	sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
 
 	time.Sleep(1 * time.Second)
 
@@ -73,9 +69,6 @@ func main() {
 		counter++
 		fmt.Printf("Receiving Count: %v Channel Occupancy: %v\n", counter, len(sensorFeed))
 	}
-
-	// Will fail unless BufferSensors is set to infinite loop
-	wg.Wait()
 
 	//fmt.Println("main finished")
 }
