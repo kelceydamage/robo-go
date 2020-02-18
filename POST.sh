@@ -15,7 +15,7 @@ handleError () {
         printMessage "${RED}ERROR:${NC} $2 $3"
         exit 1
     else
-        printMessage "${GREEN}SUCCESS:${NC} All checks passed for " $3
+        printMessage "${GREEN}SUCCESS:${NC} All checks passed for $3"
     fi
 }
 
