@@ -45,7 +45,7 @@ func main() {
 
 	// Still need some safety around threading this.
 	wg.Add(1)
-	go sensors.BufferSensors(&wg, sensorPackage, serial, sensorFeed)
+	go sensors.BufferSensors(&wg, sensorPackage, &serial, sensorFeed)
 
 	time.Sleep(1 * time.Second)
 

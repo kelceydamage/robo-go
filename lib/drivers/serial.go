@@ -25,7 +25,7 @@ type serialState struct {
 
 // SerialState is the driver object to be used for communicating with
 // MegaPi control board.
-var SerialState *serialState
+var SerialState serialState
 
 // OpenOptions are the options object for the serial interface.
 type OpenOptions = serial.OpenOptions
