@@ -1,3 +1,5 @@
+# System defaults
+#================================================================================
 DATE=`date`
 RED='\033[0;31m'
 GREEN='\033[0;92m'
@@ -5,12 +7,15 @@ ORANGE='\033[38;2;255;165;0m'
 BLUE='\033[0;94m'
 NC='\033[0m'
 COMMIT_MSG=""
+#================================================================================
 
-if [ -z $1 ]; then
-    COMMIT_MSG="$DATE - auto commit"
-else
-    COMMIT_MSG=$1
-fi
+# Git configuration
+#================================================================================
+GIT_USER="Kelcey Jamison-Damage"
+GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+GIT_UPSTREAM=`git remote`
+GIT_AUTOCOMMIT_MSG="$DATE - auto commit"
+#================================================================================
 
 printMessage() {
     printf '=%.0s' {1..80}; echo
@@ -26,6 +31,18 @@ handleError () {
         printMessage "${GREEN}SUCCESS:${NC} All checks passed for $3"
     fi
 }
+
+# If no commit message is passed, then use the auto-commit message.
+if [ -z $1 ]; then
+    COMMIT_MSG=$GIT_AUTOCOMMIT_MSG
+else
+    if [ $1 == "-h" ]; then
+        printMessage "${BLUE}HELP:${NC} Usage ${ORANGE}./POST.sh \"optional commit message\"${NC}"
+        exit 0
+    else
+        COMMIT_MSG=$1
+    fi
+fi
 
 printMessage "${BLUE}INFO:${NC} Starting post operation"
 
@@ -45,10 +62,10 @@ printMessage "${GREEN}SUCCESS:${NC} All checks passed"
 
 printMessage "${BLUE}INFO:${NC} Generating auto-commit: ${ORANGE}${COMMIT_MSG}${NC}"
 git add .
-git config --global user.name "Kelcey Jamison-Damage"
+git config --global user.name $GIT_USER
 git commit -m "${COMMIT_MSG}"
 
 printMessage "${BLUE}INFO:${NC} Pushing to Git"
-git push origin master
-handleError $? "Can't post due to errors. Please review" "${ORANGE}git push origin master${NC}"
+git push $GIT_UPSTREAM $GIT_BRANCH
+handleError $? "Can't post due to errors. Please review" "${ORANGE}git push ${GIT_UPSTREAM} ${GIT_BRANCH}${NC}"
 
