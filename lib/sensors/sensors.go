@@ -33,6 +33,7 @@ func (s *Sensor) Configure(device byte, port byte) {
 
 func (s *Sensor) asFloat(bytes []byte) float32 {
 	binrep := binary.BigEndian.Uint32(bytes)
+	fmt.Printf("Converting: %v, %v\v", bytes, binrep)
 	floatrep := *(*float32)(unsafe.Pointer(&binrep))
 	return floatrep
 }
@@ -80,6 +81,7 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 				break
 			} else {
 				//fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
+				fmt.Printf("Converting: %v\v", c.Result(CommRecv)[3:])
 				fmt.Printf("Reading: %v\n", sensor.asFloat(c.Result(CommRecv)[3:]))
 				channel <- c.Result(CommRecv)
 			}
