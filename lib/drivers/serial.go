@@ -19,6 +19,7 @@ type serialState struct {
 	length   int
 	Complete bool
 	err      error
+	prevByte byte
 	port     io.ReadWriteCloser
 }
 
@@ -31,6 +32,7 @@ type OpenOptions = serial.OpenOptions
 
 func (s *serialState) Open(options serial.OpenOptions) {
 	s.start = false
+	s.prevByte = 0x00
 	s.discard = false
 	s.head = 0x00
 	s.tail = 0x00
@@ -96,7 +98,6 @@ func (s *serialState) incrementAndStore(recvByte byte) {
 func (s *serialState) parseSerialByte(recvByte byte) {
 	var selected = true
 	var err error
-	var terminator byte
 	switch {
 	// register start byte
 	case recvByte == 0xff:
@@ -108,11 +109,8 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	case recvByte == 0x55 && s.head == 0xff:
 		s.start = true
 		s.head = 0
-	case recvByte == 13:
-		terminator = 13
-	case recvByte == 10 && terminator == 13:
-		fmt.Print("kill\n")
-		terminator = 0x00
+	case recvByte == 10 && s.prevByte == 13:
+		fmt.Printf("kill\n")
 		s.discard = true
 		s.counter = -1
 		selected = false
@@ -135,6 +133,7 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 		}
 	}
 	if selected == true {
+		s.prevByte = recvByte
 		s.incrementAndStore(recvByte)
 		if s.Complete == true {
 			s.counter = -1
