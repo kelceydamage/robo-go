@@ -39,6 +39,7 @@ func (s *serialState) Open(options serial.OpenOptions) {
 	s.counter = -1
 	s.length = 0
 	s.Complete = false
+	s.Buff = make([]byte, 12)
 	s.port, s.err = serial.Open(options)
 	if s.err != nil {
 		log.Fatalf("port.Open: %v", s.err)
@@ -107,7 +108,6 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	case recvByte == 0x55 && s.prevByte == 0xff:
 		s.counter = -1
 		s.incrementAndStore(recvByte)
-		s.Buff = make([]byte, 12)
 		s.Complete = false
 		s.counter = 0
 	// All other bytes
