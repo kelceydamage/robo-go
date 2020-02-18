@@ -110,8 +110,7 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 		s.Complete = false
 		s.counter = 0
 	case recvByte == 10 && s.prevByte == 13:
-		fmt.Printf("Kill")
-		s.discard = true
+		fmt.Printf("Kill\n")
 		selected = false
 		s.counter = -1
 	// All other bytes
