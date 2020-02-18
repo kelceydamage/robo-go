@@ -111,9 +111,11 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	case recvByte == 13:
 		terminator = 13
 	case recvByte == 10 && terminator == 13:
+		fmt.Print("kill\n")
 		terminator = 0x00
 		s.discard = true
 		s.counter = -1
+		selected = false
 	// All other bytes
 	default:
 		s.tail = 0
