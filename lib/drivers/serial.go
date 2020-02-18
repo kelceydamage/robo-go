@@ -89,7 +89,7 @@ func (s *serialState) parseIncomming(n int, buff []byte) {
 
 func (s *serialState) incrementAndStore(recvByte byte) {
 	s.counter++
-	fmt.Printf("I&C\n Count: %v, Byte: %v\n", s.counter, recvByte)
+	//fmt.Printf("I&C\n Count: %v, Byte: %v\n", s.counter, recvByte)
 	s.Buff[s.counter] = recvByte
 }
 
