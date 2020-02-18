@@ -59,7 +59,7 @@ func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
 		}
 		fmt.Printf("tempbuff: %v\n", buff)
 		s.parseIncomming(n, buff)
-		if s.Complete == true {
+		if s.Complete == true || s.discard == true {
 			break
 		}
 	}
@@ -78,6 +78,9 @@ func (s *serialState) Close() {
 func (s *serialState) parseIncomming(n int, buff []byte) {
 	for i := 0; i < n; i++ {
 		s.parseSerialByte(buff[i])
+		if s.discard == true {
+			break
+		}
 	}
 }
 
@@ -93,6 +96,7 @@ func (s *serialState) incrementAndStore(recvByte byte) {
 func (s *serialState) parseSerialByte(recvByte byte) {
 	var selected = true
 	var err error
+	var terminator byte
 	switch {
 	// register start byte
 	case recvByte == 0xff:
@@ -104,6 +108,12 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	case recvByte == 0x55 && s.head == 0xff:
 		s.start = true
 		s.head = 0
+	case recvByte == 13:
+		terminator = 13
+	case recvByte == 10 && terminator == 13:
+		terminator = 0x00
+		s.discard = true
+		s.counter = -1
 	// All other bytes
 	default:
 		s.tail = 0
