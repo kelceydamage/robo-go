@@ -60,7 +60,7 @@ func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
 			s.err = err
 			fmt.Printf("error: %v\n", err)
 		}
-		fmt.Printf("tempbuff: %v, N: %v\n", buff, n)
+		//fmt.Printf("tempbuff: %v, N: %v\n", buff, n)
 		s.parseIncomming(n, buff)
 		if s.Complete == true || s.discard == true {
 			break
@@ -100,7 +100,7 @@ func (s *serialState) incrementAndStore(recvByte byte) {
 func (s *serialState) parseSerialByte(recvByte byte) {
 	var selected = true
 	var err error
-	fmt.Printf("P: %v, C: %v\n", s.prevByte, recvByte)
+	//fmt.Printf("P: %v, C: %v\n", s.prevByte, recvByte)
 	switch {
 	// confirm full start sequence
 	case recvByte == 0x55 && s.prevByte == 0xff:
@@ -110,7 +110,7 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 		s.Complete = false
 		s.counter = 0
 	case recvByte == 10 && s.prevByte == 13:
-		fmt.Printf("Kill\n")
+		//fmt.Printf("Kill\n")
 		selected = false
 		s.counter = -1
 	// All other bytes
