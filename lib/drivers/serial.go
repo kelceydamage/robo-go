@@ -106,10 +106,15 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	switch {
 	// confirm full start sequence
 	case recvByte == 0x55 && s.prevByte == 0xff:
+		s.discard = false
 		s.counter = -1
 		s.incrementAndStore(recvByte)
 		s.Complete = false
 		s.counter = 0
+	case recvByte == 0x10 && s.prevByte == 0x0a:
+		s.discard = true
+		selected = false
+		s.counter = -1
 	// All other bytes
 	default:
 		s.tail = 0
