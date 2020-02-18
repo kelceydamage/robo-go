@@ -100,6 +100,7 @@ func (s *serialState) incrementAndStore(recvByte byte) {
 func (s *serialState) parseSerialByte(recvByte byte) {
 	var selected = true
 	var err error
+	fmt.Printf("P: %v, C: %v", s.prevByte, recvByte)
 	switch {
 	// confirm full start sequence
 	case recvByte == 0x55 && s.prevByte == 0xff:
@@ -108,7 +109,8 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 		s.incrementAndStore(recvByte)
 		s.Complete = false
 		s.counter = 0
-	case recvByte == 0x10 && s.prevByte == 0x0a:
+	case recvByte == 10 && s.prevByte == 13:
+		fmt.Printf("Kill")
 		s.discard = true
 		selected = false
 		s.counter = -1
