@@ -76,6 +76,10 @@ func (q *SensorStack) Slice(start int, end int) (top []*SensorReading, err error
 		err = errors.New("Empty Stack")
 		return
 	}
+	if end > q.Len()-1 || start > q.Len()-1 {
+		err = errors.New("Slice Range Out Of Bounds")
+		return
+	}
 	top = (*q)[start:end]
 	return
 }
