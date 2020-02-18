@@ -1,0 +1,1 @@
+./godelw docker build --verbose
