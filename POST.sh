@@ -21,8 +21,12 @@ handleError () {
 
 DATE=`date`
 printMessage "${BLUE}INFO:${NC} Starting post operation"
+
 ./godelw format
+printMessage "${BLUE}INFO:${NC} Formatted code files"
+
 ./godelw license
+printMessage "${BLUE}INFO:${NC} Added license headers"
 
 ./godelw check
 handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw check${NC}"
@@ -31,8 +35,12 @@ handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw chec
 handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw test${NC}"
 
 printMessage "${GREEN}SUCCESS:${NC} All checks passed"
+
+printMessage "${BLUE}INFO:${NC} Generating auto-commit: ${ORANGE}${DATE}${NC}"
 git add .
 git config --global user.name "Kelcey Jamison-Damage"
 git commit -m "$DATE - auto commit"
+
+printMessage "${BLUE}INFO:${NC} Pushing to Git"
 git push origin master
 
