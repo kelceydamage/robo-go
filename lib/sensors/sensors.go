@@ -11,10 +11,10 @@ import (
 
 // SensorReading is a tagged value object.
 type SensorReading struct {
-	port   byte
-	device byte
-	idx    byte
-	value  float32
+	Port   byte
+	Device byte
+	Idx    byte
+	Value  float32
 }
 
 // Sensor is the representation of a physical sensor on the controller.
@@ -29,17 +29,17 @@ type Sensor struct {
 
 func (s *Sensor) getReading(c *comm) SensorReading {
 	var reading SensorReading
-	reading.port = s.port
-	reading.device = s.device
-	reading.idx = s.idx
-	reading.value = s.asFloat((*c).Result(CommRecv)[4:])
+	reading.Port = s.port
+	reading.Device = s.device
+	reading.Idx = s.idx
+	reading.Value = s.asFloat((*c).Result(CommRecv)[4:])
 	return reading
 }
 
 func (s *Sensor) asFloat(bytes []byte) float32 {
 	binrep := binary.LittleEndian.Uint32(bytes)
-	fmt.Printf("Converting: %v, %v\v", bytes, binrep)
 	floatrep := *(*float32)(unsafe.Pointer(&binrep))
+	fmt.Printf("Converting: %v, %v -> %v\n", bytes, binrep, floatrep)
 	return floatrep
 }
 

@@ -53,7 +53,7 @@ func main() {
 	counter := 0
 	for {
 		result := <-sensorFeed
-		fmt.Printf("Receiving: %v\n", result)
+		fmt.Printf("Receiving: %v\n", result.Value)
 		counter++
 		fmt.Printf("Receiving Count: %v Channel Occupancy: %v\n", counter, len(sensorFeed))
 	}
