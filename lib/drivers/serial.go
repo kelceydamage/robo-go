@@ -26,7 +26,7 @@ import (
 )
 
 type serialState struct {
-	Buff     []byte
+	Buff     [12]byte
 	start    bool
 	discard  bool
 	head     byte
@@ -55,7 +55,7 @@ func (s *serialState) Open(options serial.OpenOptions) {
 	s.counter = -1
 	s.length = 0
 	s.Complete = false
-	s.Buff = make([]byte, 12)
+	s.Buff = [12]byte{11: 0}
 	s.port, s.err = serial.Open(options)
 	if s.err != nil {
 		log.Fatalf("port.Open: %v", s.err)
