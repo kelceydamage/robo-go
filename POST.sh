@@ -1,8 +1,16 @@
+DATE=`date`
 RED='\033[0;31m'
 GREEN='\033[0;92m'
 ORANGE='\033[38;2;255;165;0m'
 BLUE='\033[0;94m'
 NC='\033[0m'
+COMMIT_MSG=""
+
+if [ -z $1 ]; then
+    COMMIT_MSG=$1
+else
+    COMMIT_MSG="$DATE - auto commit"
+fi
 
 printMessage() {
     printf '=%.0s' {1..80}; echo
@@ -19,7 +27,6 @@ handleError () {
     fi
 }
 
-DATE=`date`
 printMessage "${BLUE}INFO:${NC} Starting post operation"
 
 ./godelw format
@@ -36,10 +43,10 @@ handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw test
 
 printMessage "${GREEN}SUCCESS:${NC} All checks passed"
 
-printMessage "${BLUE}INFO:${NC} Generating auto-commit: ${ORANGE}${DATE}${NC}"
+printMessage "${BLUE}INFO:${NC} Generating auto-commit: ${ORANGE}${COMMIT_MSG}${NC}"
 git add .
 git config --global user.name "Kelcey Jamison-Damage"
-git commit -m "$DATE - auto commit"
+git commit -m "${COMMIT_MSG}"
 
 printMessage "${BLUE}INFO:${NC} Pushing to Git"
 git push origin master
