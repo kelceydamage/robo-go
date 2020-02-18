@@ -7,9 +7,9 @@ NC='\033[0m'
 COMMIT_MSG=""
 
 if [ -z $1 ]; then
-    COMMIT_MSG=$1
-else
     COMMIT_MSG="$DATE - auto commit"
+else
+    COMMIT_MSG=$1
 fi
 
 printMessage() {
