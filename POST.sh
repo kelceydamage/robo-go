@@ -43,4 +43,5 @@ git commit -m "$DATE - auto commit"
 
 printMessage "${BLUE}INFO:${NC} Pushing to Git"
 git push origin master
+handleError $? "Can't post due to errors. Please review" "${ORANGE}git push origin master${NC}"
 
