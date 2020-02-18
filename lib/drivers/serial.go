@@ -99,21 +99,13 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	var selected = true
 	var err error
 	switch {
-	// register start byte
-	case recvByte == 0xff:
+	// confirm full start sequence
+	case recvByte == 0x55 && s.prevByte == 0xff:
+		s.counter = -1
+		s.incrementAndStore(recvByte)
 		s.Buff = make([]byte, 12)
 		s.Complete = false
-		s.counter = -1
-		s.head = 0xff
-	// confirm full start sequence
-	case recvByte == 0x55 && s.head == 0xff:
-		s.start = true
-		s.head = 0
-	case recvByte == 10 && s.prevByte == 13:
-		fmt.Printf("kill\n")
-		s.discard = true
-		s.counter = -1
-		selected = false
+		s.counter = 0
 	// All other bytes
 	default:
 		s.tail = 0
@@ -130,10 +122,11 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 			s.Complete = true
 		} else {
 			selected = false
+			s.counter = -1
 		}
 	}
+	s.prevByte = recvByte
 	if selected == true {
-		s.prevByte = recvByte
 		s.incrementAndStore(recvByte)
 		if s.Complete == true {
 			s.counter = -1
