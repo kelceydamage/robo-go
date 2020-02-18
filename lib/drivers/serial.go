@@ -60,9 +60,6 @@ func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
 			s.err = err
 			fmt.Printf("error: %v\n", err)
 		}
-		if n == 0 {
-			n = 12
-		}
 		fmt.Printf("tempbuff: %v, N: %v\n", buff, n)
 		s.parseIncomming(n, buff)
 		if s.Complete == true || s.discard == true {
@@ -92,7 +89,7 @@ func (s *serialState) parseIncomming(n int, buff []byte) {
 
 func (s *serialState) incrementAndStore(recvByte byte) {
 	s.counter++
-	fmt.Printf("I&C\n Count: %v\n", s.counter)
+	fmt.Printf("I&C\n Count: %v, Byte: %v\n", s.counter, recvByte)
 	s.Buff[s.counter] = recvByte
 }
 
