@@ -76,7 +76,7 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 			}
 			//tempBuff = []byte{0xff, 0x55, sensor.device, 0x00, 0x00, 0x00, 0x00, 0x00}
 			//channel <- tempBuff
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(20 * time.Millisecond)
 		}
 	}
 }
