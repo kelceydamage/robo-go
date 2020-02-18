@@ -106,7 +106,7 @@ func (s *serialState) parseSerialByte(recvByte byte) {
 	case recvByte == 0x55 && s.prevByte == 0xff:
 		s.discard = false
 		s.counter = -1
-		s.incrementAndStore(recvByte)
+		s.incrementAndStore(s.prevByte)
 		s.Complete = false
 		s.counter = 0
 	case recvByte == 10 && s.prevByte == 13:
