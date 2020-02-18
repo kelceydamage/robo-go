@@ -1,10 +1,12 @@
 package sensors
 
 import (
+	"encoding/binary"
 	"fmt"
 	"log"
 	"sync"
 	"time"
+	"unsafe"
 )
 
 // Sensor is the representation of a physical sensor on the controller.
@@ -27,6 +29,12 @@ func (s *Sensor) Configure(device byte, port byte) {
 	s.port = port
 	s.generateID()
 	s.Serialized = []byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
+}
+
+func (s *Sensor) asFloat(bytes []byte) float32 {
+	binrep := binary.LittleEndian.Uint32(bytes)
+	floatrep := *(*float32)(unsafe.Pointer(&binrep))
+	return floatrep
 }
 
 // Sensors is a map designed to store a Sensor at any given index.
@@ -72,6 +80,7 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 				break
 			} else {
 				//fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
+				fmt.Printf("Reading: %v\n", sensor.asFloat(c.Result(CommRecv)[3:]))
 				channel <- c.Result(CommRecv)
 			}
 			//tempBuff = []byte{0xff, 0x55, sensor.device, 0x00, 0x00, 0x00, 0x00, 0x00}
