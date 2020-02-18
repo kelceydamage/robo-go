@@ -81,8 +81,8 @@ func BufferSensors(wg *sync.WaitGroup, sensorPackage Sensors, c comm, channel ch
 				break
 			} else {
 				//fmt.Printf("Adding to channel: %v\n", c.Result(CommRecv))
-				fmt.Printf("Converting: %v\v", c.Result(CommRecv)[3:])
-				fmt.Printf("Reading: %v\n", sensor.asFloat(c.Result(CommRecv)[3:]))
+				fmt.Printf("Converting: %v\v", c.Result(CommRecv)[4:])
+				fmt.Printf("Reading: %v\n", sensor.asFloat(c.Result(CommRecv)[4:]))
 				channel <- c.Result(CommRecv)
 			}
 			//tempBuff = []byte{0xff, 0x55, sensor.device, 0x00, 0x00, 0x00, 0x00, 0x00}
