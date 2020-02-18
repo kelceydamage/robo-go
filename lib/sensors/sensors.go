@@ -32,7 +32,7 @@ func (s *Sensor) Configure(device byte, port byte) {
 }
 
 func (s *Sensor) asFloat(bytes []byte) float32 {
-	binrep := binary.BigEndian.Uint32(bytes)
+	binrep := binary.LittleEndian.Uint32(bytes)
 	fmt.Printf("Converting: %v, %v\v", bytes, binrep)
 	floatrep := *(*float32)(unsafe.Pointer(&binrep))
 	return floatrep
