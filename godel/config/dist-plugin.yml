@@ -1,0 +1,19 @@
+products:
+  robo-go:
+    build:
+      main-pkg: .
+      version-var: main.version
+      os-archs:
+        - os: linux
+          arch: arm
+        - os: darwin
+          arch: amd64
+    dist:
+      disters:
+        type: os-arch-bin
+        config:
+          os-archs:
+            - os: linux
+              arch: arm
+            - os: darwin
+              arch: amd64
