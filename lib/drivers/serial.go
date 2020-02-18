@@ -59,7 +59,10 @@ func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
 			s.err = err
 			fmt.Printf("error: %v\n", err)
 		}
-		fmt.Printf("tempbuff: %v\n", buff)
+		if n == 0 {
+			n = 12
+		}
+		fmt.Printf("tempbuff: %v, N: %v\n", buff, n)
 		s.parseIncomming(n, buff)
 		if s.Complete == true || s.discard == true {
 			break
