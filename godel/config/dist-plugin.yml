@@ -20,3 +20,12 @@ products:
                 arch: amd64
         bin:
           type: bin
+    docker:
+      docker-builders:
+        robo-go:
+          type: default
+          context-dir: dockerctx
+          input-products-dir: inputs
+          tag-templates:
+            - "{{Repository}}robo-go:{{Version}}"
+            - "{{Repository}}robo-go:latest"
