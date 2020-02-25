@@ -20,40 +20,124 @@ import (
 	"github.com/kelceydamage/robo-go/lib/drivers"
 )
 
-// Sensor is the representation of a physical sensor on the controller.
+// SensorReader is the interface for reading from a sensor.
+type serialReader interface {
+	Read(drivers.Comm) SensorReading
+}
+
+type portReader interface {
+	GetPort() byte
+}
+
+type deviceReader interface {
+	GetDevice() byte
+}
+
+type idReader interface {
+	GetID() byte
+}
+
+type valueReader interface {
+	GetValue() float32
+}
+
+type serialCodeReader interface {
+	GetSerialCode() [SerialCodeLength]byte
+}
+
+type sensorInitializer interface {
+	Configure(byte, byte, drivers.Comm)
+}
+
+type sensorReader interface {
+	GetSensor() Sensor
+}
+
+// Sensor is the interface for physical sensors plugged into the board.
+type Sensor interface {
+	serialReader
+	portReader
+	deviceReader
+	idReader
+	serialCodeReader
+	sensorInitializer
+}
+
+// SensorReading is the interface for anyobject returned by a physical sensor.
+type SensorReading interface {
+	valueReader
+	sensorReader
+}
+
+// PhysicalSensor is the representation of a physical sensor on the controller.
 // It contains the serial code to retrieve data from the ophysical sensor, along
 // with the device, port, and id.
-type Sensor struct {
+type PhysicalSensor struct {
 	port       byte
 	device     byte
 	idx        byte
-	Serialized [SerialBuffer]byte
+	serialCode [SerialCodeLength]byte
+	driver     drivers.Comm
 }
 
-func (s *Sensor) getReading(c *drivers.Comm) SensorReading {
-	var reading SensorReading
-	reading.Port = s.port
-	reading.Device = s.device
-	reading.Idx = s.idx
-	reading.Value = s.asFloat((*c).Result(CommRecv)[4:])
-	return reading
+// GetPort returns the physical sensor port.
+func (s *PhysicalSensor) GetPort() byte {
+	return s.port
 }
 
-func (s *Sensor) asFloat(bytes []byte) float32 {
+// GetDevice returns the physical sensor device type.
+func (s *PhysicalSensor) GetDevice() byte {
+	return s.device
+}
+
+// GetID returns the physical sensor ID.
+func (s *PhysicalSensor) GetID() byte {
+	return s.idx
+}
+
+// GetSerialCode returns the physical sensor serial code.
+func (s *PhysicalSensor) GetSerialCode() [SerialCodeLength]byte {
+	return s.serialCode
+}
+
+func (s *PhysicalSensor) Read(c drivers.Comm) SensorReading {
+	var reading sensorReading
+	reading.sensor = s
+	reading.value = s.asFloat((s.driver).Result(CommRecv)[4:])
+	return &reading
+}
+
+func (s *PhysicalSensor) asFloat(bytes []byte) float32 {
 	binrep := binary.LittleEndian.Uint32(bytes)
 	floatrep := *(*float32)(unsafe.Pointer(&binrep))
 	fmt.Printf("Converting: %v, %v -> %v\n", bytes, binrep, floatrep)
 	return floatrep
 }
 
-func (s *Sensor) generateID() {
-	s.idx = ((s.port << 4) + s.device) & 0xff
+func (s *PhysicalSensor) generateID() {
+	s.idx = ((s.GetPort() << 4) + s.GetDevice()) & 0xff
 }
 
 // Configure generates the serial code for calling the sensor.
-func (s *Sensor) Configure(device byte, port byte) {
+func (s *PhysicalSensor) Configure(device byte, port byte, driver drivers.Comm) {
 	s.device = device
 	s.port = port
 	s.generateID()
-	s.Serialized = [SerialBuffer]byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
+	s.serialCode = [SerialCodeLength]byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
+	s.driver = driver
+}
+
+type sensorReading struct {
+	value  float32
+	sensor Sensor
+}
+
+// GetValue returns the stored sensor value.
+func (s *sensorReading) GetValue() float32 {
+	return s.value
+}
+
+// GetSensor returns the stored sensor value.
+func (s *sensorReading) GetSensor() Sensor {
+	return s.sensor
 }

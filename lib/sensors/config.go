@@ -17,9 +17,9 @@
 package sensors
 
 const (
-	StartByte1   = 0xff
-	StartByte2   = 0x55
-	CommRecv     = 8
-	CommSend     = 7
-	SerialBuffer = 8
+	StartByte1       = 0xff
+	StartByte2       = 0x55
+	CommRecv         = 8
+	CommSend         = 7
+	SerialCodeLength = 8
 )

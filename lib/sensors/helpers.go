@@ -45,9 +45,9 @@ func bufferSensorsRoutine(wg *sync.WaitGroup, sensorPackage Sensors, c drivers.C
 	for {
 		tempBuff := [12]byte{11: 0x00}
 		for _, sensor := range sensorPackage.manifest {
-			fmt.Printf("Sending: %v\n", sensor.Serialized)
+			fmt.Printf("Sending: %v\n", sensor.GetSerialCode())
 
-			_, err := c.Write(sensor.Serialized)
+			_, err := c.Write(sensor.GetSerialCode())
 			if err != nil {
 				log.Fatalf("port.Read: %v", err)
 				break
@@ -57,7 +57,7 @@ func bufferSensorsRoutine(wg *sync.WaitGroup, sensorPackage Sensors, c drivers.C
 				log.Fatalf("port.Read: %v", err)
 				break
 			} else {
-				channel <- sensor.getReading(&c)
+				channel <- sensor.Read(c)
 			}
 			time.Sleep(20 * time.Millisecond)
 		}
