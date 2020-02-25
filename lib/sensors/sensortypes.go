@@ -17,4 +17,10 @@
 package sensors
 
 // Ultrasonic is a predefined alias object for a sensor.
-var Ultrasonic Sensor
+var Ultrasonic PhysicalSensor
+
+// LoadSensorTypes makes all the known sensor types available and setup.
+func LoadSensorTypes() {
+	Ultrasonic.port = UltrasonicPort
+	Ultrasonic.device = UltrasonicDevice
+}

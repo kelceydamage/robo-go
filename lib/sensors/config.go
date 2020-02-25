@@ -22,4 +22,6 @@ const (
 	CommRecv         = 8
 	CommSend         = 7
 	SerialCodeLength = 8
+	UltrasonicPort   = 8
+	UltrasonicDevice = 1
 )

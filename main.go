@@ -33,8 +33,7 @@ import (
 */
 
 // Global objects
-var serial = drivers.SerialState
-var sensorPackage = sensors.PackageSensors(1)
+var sensorPackage sensors.SensorPackage
 var sensorFeed = make(chan sensors.SensorReading, 512)
 
 func init() {
@@ -47,17 +46,20 @@ func init() {
 		MinimumReadSize:       4,
 		InterCharacterTimeout: 1,
 	}
-	serial.Open(options)
+	drivers.SerialState.Open(options)
+	sensors.LoadSensorTypes()
+	sensorPackage.Initialize()
+	sensorPackage.WriteLength(1)
 
 	// Configure sensors
-	sensors.Ultrasonic.Configure(1, 8, &serial)
-	sensorPackage.Set(0, sensors.Ultrasonic)
+	sensors.Ultrasonic.Initialize()
+	sensorPackage.SetSensor(&sensors.Ultrasonic)
 }
 
 func main() {
-	defer serial.Close()
+	defer drivers.SerialState.Close()
 
-	sensors.BufferSensors(sensorPackage, &serial, sensorFeed)
+	sensors.BufferSensors(sensorPackage, sensorFeed)
 
 	time.Sleep(1 * time.Second)
 

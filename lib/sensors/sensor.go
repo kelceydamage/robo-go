@@ -20,55 +20,6 @@ import (
 	"github.com/kelceydamage/robo-go/lib/drivers"
 )
 
-// SensorReader is the interface for reading from a sensor.
-type serialReader interface {
-	Read(drivers.Comm) SensorReading
-}
-
-type portReader interface {
-	GetPort() byte
-}
-
-type deviceReader interface {
-	GetDevice() byte
-}
-
-type idReader interface {
-	GetID() byte
-}
-
-type valueReader interface {
-	GetValue() float32
-}
-
-type serialCodeReader interface {
-	GetSerialCode() [SerialCodeLength]byte
-}
-
-type sensorInitializer interface {
-	Configure(byte, byte, drivers.Comm)
-}
-
-type sensorReader interface {
-	GetSensor() Sensor
-}
-
-// Sensor is the interface for physical sensors plugged into the board.
-type Sensor interface {
-	serialReader
-	portReader
-	deviceReader
-	idReader
-	serialCodeReader
-	sensorInitializer
-}
-
-// SensorReading is the interface for anyobject returned by a physical sensor.
-type SensorReading interface {
-	valueReader
-	sensorReader
-}
-
 // PhysicalSensor is the representation of a physical sensor on the controller.
 // It contains the serial code to retrieve data from the ophysical sensor, along
 // with the device, port, and id.
@@ -77,7 +28,7 @@ type PhysicalSensor struct {
 	device     byte
 	idx        byte
 	serialCode [SerialCodeLength]byte
-	driver     drivers.Comm
+	driver     drivers.Driver
 }
 
 // GetPort returns the physical sensor port.
@@ -100,10 +51,18 @@ func (s *PhysicalSensor) GetSerialCode() [SerialCodeLength]byte {
 	return s.serialCode
 }
 
-func (s *PhysicalSensor) Read(c drivers.Comm) SensorReading {
+func (s *PhysicalSensor) Read() SensorReading {
 	var reading sensorReading
+	_, err := s.driver.Write(s.GetSerialCode())
+	if err != nil {
+		fmt.Println("Error Writing Driver")
+	}
+	_, err = s.driver.Read()
+	if err != nil {
+		fmt.Println("Error Reading Driver")
+	}
 	reading.sensor = s
-	reading.value = s.asFloat((s.driver).Result(CommRecv)[4:])
+	reading.value = s.asFloat(s.driver.Result(CommRecv)[4:])
 	return &reading
 }
 
@@ -118,13 +77,11 @@ func (s *PhysicalSensor) generateID() {
 	s.idx = ((s.GetPort() << 4) + s.GetDevice()) & 0xff
 }
 
-// Configure generates the serial code for calling the sensor.
-func (s *PhysicalSensor) Configure(device byte, port byte, driver drivers.Comm) {
-	s.device = device
-	s.port = port
+// Initialize generates the serial code for calling the sensor.
+func (s *PhysicalSensor) Initialize() {
 	s.generateID()
 	s.serialCode = [SerialCodeLength]byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
-	s.driver = driver
+	s.driver = &drivers.SerialState
 }
 
 type sensorReading struct {
@@ -140,4 +97,40 @@ func (s *sensorReading) GetValue() float32 {
 // GetSensor returns the stored sensor value.
 func (s *sensorReading) GetSensor() Sensor {
 	return s.sensor
+}
+
+// Sensors is a map designed to store a Sensor at any given index.
+type sensorPackage struct {
+	manifest     map[int]Sensor
+	currentIndex int
+	length       int
+}
+
+func (s *sensorPackage) Initialize() {
+	s.manifest = make(map[int]Sensor)
+}
+
+// GetSensor a particular sensor at a given index from the manifest.
+func (s *sensorPackage) GetSensor() Sensor {
+	return s.manifest[s.currentIndex-1]
+}
+
+// SetSensor a particular Sensor at a given index in the manifest.
+func (s *sensorPackage) SetSensor(sensor Sensor) {
+	s.Next()
+	s.manifest[s.currentIndex-1] = sensor
+}
+
+func (s *sensorPackage) WriteLength(length int) {
+	s.length = length
+}
+
+// Next moves the iteration forward.
+func (s *sensorPackage) Next() bool {
+	s.currentIndex++
+	if s.currentIndex < s.length {
+		return true
+	}
+	s.currentIndex = 0
+	return false
 }

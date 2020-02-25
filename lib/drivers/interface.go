@@ -12,10 +12,10 @@
 
 package drivers
 
-// Comm is an interface to allow writing communications services
+// Driver is an interface to allow writing communications services
 // that can accept different drivers.
-type Comm interface {
-	Read(*[12]byte) (int, error)
+type Driver interface {
+	Read() (int, error)
 	Write([8]byte) (int, error)
 	Result(int) []byte
 }

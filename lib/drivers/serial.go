@@ -27,6 +27,7 @@ import (
 
 type serialState struct {
 	Buff     [12]byte
+	recvBuff [12]byte
 	start    bool
 	discard  bool
 	head     byte
@@ -56,6 +57,7 @@ func (s *serialState) Open(options serial.OpenOptions) {
 	s.length = 0
 	s.Complete = false
 	s.Buff = [12]byte{11: 0}
+	s.recvBuff = [12]byte{11: 0}
 	s.port, s.err = serial.Open(options)
 	if s.err != nil {
 		log.Fatalf("port.Open: %v", s.err)
@@ -66,11 +68,11 @@ func (s *serialState) Write(msg [8]byte) (bytesWritten int, err error) {
 	return s.port.Write(msg[:])
 }
 
-func (s *serialState) Read(buff *[12]byte) (bytesRead int, err error) {
+func (s *serialState) Read() (bytesRead int, err error) {
 	var n int
 	for {
 		//fmt.Println("Buffer cycle")
-		tslice := buff[:]
+		tslice := s.recvBuff[:]
 		n, err := s.port.Read(tslice)
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
@@ -78,7 +80,7 @@ func (s *serialState) Read(buff *[12]byte) (bytesRead int, err error) {
 			fmt.Printf("error: %v\n", err)
 		}
 		//fmt.Printf("tempbuff: %v, N: %v\n", buff, n)
-		s.parseIncomming(n, buff)
+		s.parseIncomming(n)
 		if s.Complete == true || s.discard == true {
 			break
 		}
@@ -95,9 +97,9 @@ func (s *serialState) Close() {
 	// s.port.Close()
 }
 
-func (s *serialState) parseIncomming(n int, buff *[12]byte) {
+func (s *serialState) parseIncomming(n int) {
 	for i := 0; i < n; i++ {
-		s.parseSerialByte((*buff)[i])
+		s.parseSerialByte(s.recvBuff[i])
 		if s.discard == true {
 			break
 		}
