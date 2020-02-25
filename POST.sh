@@ -46,26 +46,18 @@ fi
 
 printMessage "${BLUE}INFO:${NC} Starting post operation"
 
-./godelw format
-printMessage "${BLUE}INFO:${NC} Formatted code files"
+./godelw verify
+printMessage "${BLUE}INFO:${NC} Verifying files"
 
-./godelw license
-printMessage "${BLUE}INFO:${NC} Added license headers"
-
-./godelw check
-handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw check${NC}"
-
-./godelw test
-handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw test${NC}"
+handleError $? "Can't post due to errors. Please review" "${ORANGE}./godelw verify${NC}"
 
 printMessage "${GREEN}SUCCESS:${NC} All checks passed"
 
 printMessage "${BLUE}INFO:${NC} Generating auto-commit: ${ORANGE}${COMMIT_MSG}${NC}"
 git add .
-git config --global user.name $GIT_USER
-git commit -m "${COMMIT_MSG}"
+git commit --author="${GIT_USER}" -m "${COMMIT_MSG}"
 
 printMessage "${BLUE}INFO:${NC} Pushing to Git"
-git push $GIT_UPSTREAM $GIT_BRANCH
+git push $GIT_UPSTREAM head #$GIT_BRANCH
 handleError $? "Can't post due to errors. Please review" "${ORANGE}git push ${GIT_UPSTREAM} ${GIT_BRANCH}${NC}"
 

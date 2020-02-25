@@ -62,15 +62,16 @@ func (s *serialState) Open(options serial.OpenOptions) {
 	}
 }
 
-func (s *serialState) Write(msg []byte) (bytesWritten int, err error) {
-	return s.port.Write(msg)
+func (s *serialState) Write(msg [8]byte) (bytesWritten int, err error) {
+	return s.port.Write(msg[:])
 }
 
-func (s *serialState) Read(buff []byte) (bytesRead int, err error) {
+func (s *serialState) Read(buff *[12]byte) (bytesRead int, err error) {
 	var n int
 	for {
 		//fmt.Println("Buffer cycle")
-		n, err := s.port.Read(buff)
+		tslice := buff[:]
+		n, err := s.port.Read(tslice)
 		if err != nil {
 			log.Fatalf("port.Read: %v", err)
 			s.err = err
@@ -94,9 +95,9 @@ func (s *serialState) Close() {
 	// s.port.Close()
 }
 
-func (s *serialState) parseIncomming(n int, buff []byte) {
+func (s *serialState) parseIncomming(n int, buff *[12]byte) {
 	for i := 0; i < n; i++ {
-		s.parseSerialByte(buff[i])
+		s.parseSerialByte((*buff)[i])
 		if s.discard == true {
 			break
 		}

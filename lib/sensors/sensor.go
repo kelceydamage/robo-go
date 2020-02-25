@@ -27,7 +27,7 @@ type Sensor struct {
 	port       byte
 	device     byte
 	idx        byte
-	Serialized []byte
+	Serialized [SerialBuffer]byte
 }
 
 func (s *Sensor) getReading(c *drivers.Comm) SensorReading {
@@ -55,5 +55,5 @@ func (s *Sensor) Configure(device byte, port byte) {
 	s.device = device
 	s.port = port
 	s.generateID()
-	s.Serialized = []byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
+	s.Serialized = [SerialBuffer]byte{StartByte1, StartByte2, 4, s.idx, 0x01, s.device, s.port}
 }
