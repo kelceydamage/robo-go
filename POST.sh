@@ -58,6 +58,7 @@ git add .
 git commit --author="${GIT_USER}" -m "${COMMIT_MSG}"
 
 printMessage "${BLUE}INFO:${NC} Pushing to Git"
-git push $GIT_UPSTREAM head #$GIT_BRANCH
+git push $GIT_UPSTREAM $GIT_BRANCH
 handleError $? "Can't post due to errors. Please review" "${ORANGE}git push ${GIT_UPSTREAM} ${GIT_BRANCH}${NC}"
 
+ 
